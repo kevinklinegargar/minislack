@@ -1,7 +1,23 @@
-import React from 'react';
+import React,{Component} from 'react';
+import PropTypes from 'prop-types';
+import {Route,BrowserRouter,Match} from 'react-router';
+import CelebrityJokes from './CelebrityJokes';
+import FoodJokes from './FoodJokes';
 
-export default class App extends React.Component {
-  render () {
-    return <h1>hello</h1>;
-  }
+class App extends Component {
+	render () {
+		
+    	return (
+			
+				<BrowserRouter>
+                    <div>
+                        <Match exactly pattern="/" component={FoodJokes} />
+						<Match exactly pattern="/special" component={CelebrityJokes}/>
+                    </div>
+                </BrowserRouter>
+			
+			
+		)
+  	}
 }
+export default App;
