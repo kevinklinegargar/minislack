@@ -1,23 +1,27 @@
 import React,{Component} from 'react';
 import PropTypes from 'prop-types';
 import {Route,BrowserRouter,Match} from 'react-router';
-import CelebrityJokes from './CelebrityJokes';
-import FoodJokes from './FoodJokes';
+import Dashboard from './Dashboard';
+import Signin from './Signin';
+import Signout from './Signout';
+import Signup from './Signup';
 
 class App extends Component {
 	render () {
 		
-    	return (
+			return (
 			
 				<BrowserRouter>
-                    <div>
-                        <Match exactly pattern="/" component={FoodJokes} />
-						<Match exactly pattern="/special" component={CelebrityJokes}/>
-                    </div>
-                </BrowserRouter>
+					<div>
+						<Match exactly pattern="/" component={Dashboard} />
+						<Match exactly pattern="/signin" component={Signin}/>
+						<Match exactly pattern="/signup" component={Signup} />
+						<Match exactly pattern="/signout" component={Signout}/>
+					</div>
+				</BrowserRouter>
 			
 			
 		)
-  	}
+		}
 }
 export default App;
