@@ -2,6 +2,7 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 
+
 // User Schema
 var UserSchema = mongoose.Schema({
 	username: {
@@ -27,20 +28,24 @@ module.exports.createUser = function(newUser, callback){
 	});
 }
 
-module.exports.getUserByUsername = function(username, callback){
+User.getUserByUsername = function(username, callback){
 	var query = {username: username};
 	User.findOne(query, callback);
 }
 
-module.exports.getUserById = function(id, callback){
+User.getUserById = function(id, callback){
 	User.findById(id, callback);
 }
 
-module.exports.comparePassword = function(candidatePassword, hash, callback){
+User.comparePassword = function(candidatePassword, hash, callback){
 	bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
     	if(err) throw err;
     	callback(null, isMatch);
 	});
+}
+User.getAllUsers= function(callback){
+	
+	User.find({},{password:false},callback);
 }
 
 var User = mongoose.model('User', UserSchema);

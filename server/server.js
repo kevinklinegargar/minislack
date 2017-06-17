@@ -9,6 +9,7 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var http = require('http');
 
 
 // IMPORTS //
@@ -16,13 +17,17 @@ var db = require('./services/db.js');
 var indexRoutes = require('./routes/index');
 var apiRoutes = require('./routes/api');
 var authRoutes = require('./routes/auth');
+var userRoutes = require('./routes/user');
+var messageRoutes = require('./routes/message');
+var socket = require('./routes/socket');
 var bodyParser = require('body-parser');
 
 
 
 // CREATE APP //
 var app = express();
-
+var server = http.createServer(app);
+var io = require('socket.io')(server);
 
 // VIEW ENGINE //
 app.set('view engine', 'html');
@@ -95,8 +100,11 @@ app.use(function (req, res, next) {
 app.use('/', indexRoutes);
 app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
+app.use('/user',userRoutes);
+app.use('/message',messageRoutes);
 
 app.get('*', function(req, res){
   res.redirect('/');
 });
-module.exports = app;
+io.sockets.on('connection', socket);
+module.exports = server;

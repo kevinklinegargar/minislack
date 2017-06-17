@@ -7,8 +7,7 @@ var LocalStrategy = require('passport-local').Strategy;
 
 passport.use(new LocalStrategy(
 	function(username, password, done) {
-		console.log("AUthentication");
-		console.log(username, password);
+
 	 User.getUserByUsername(username, function(err, user){
 	 	if(err) throw err;
 	 	if(!user){
@@ -39,7 +38,7 @@ passport.deserializeUser(function(id, done) {
 router.post('/signin',
 	passport.authenticate('local'),
 	function(req, res) {
-		console.log("Successful login");
+
 		res.send(true);
 });
 
@@ -56,13 +55,13 @@ router.post('/signup', (req, res) => {
 	var email = req.body.email;
 	var username = req.body.username;
 	var password = req.body.password;
-	console.log(req.body);
+
 	// Validation
 	// req.checkBody('email', 'Email is required').notEmpty();
 	// req.checkBody('email', 'Email is not valid').isEmail();
 	// req.checkBody('username', 'Username is required').notEmpty();
 	// req.checkBody('password', 'Password is required').notEmpty();
-	console.log("CheckBody");
+
 
 	//var errors = false || req.validationErrors();
 	var errors = false;
@@ -72,13 +71,13 @@ router.post('/signup', (req, res) => {
 			errors:errors
 		});
 	} else {
-		console.log("create new user");
+	
 		var newUser = new User({
 			email:email,
 			username: username,
 			password: password
 		});
-			console.log(newUser);
+		
 		User.createUser(newUser, function(err, user){
 			if(err) throw err;
 		
