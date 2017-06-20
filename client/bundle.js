@@ -23320,15 +23320,22 @@ var ChatBox = function (_Component) {
 	}
 
 	_createClass(ChatBox, [{
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate() {
+			$(".main-section").animate({ scrollTop: 88888 }, 0);
+		}
+	}, {
 		key: 'componentDidMount',
-		value: function componentDidMount() {}
+		value: function componentDidMount() {
+			$(".main-section").animate({ scrollTop: 88888 }, 0);
+		}
 	}, {
 		key: 'componentWillReceiveProps',
 		value: function componentWillReceiveProps(nextProps) {
 
 			if (nextProps.roomId !== this.props.roomId) {
 				if (nextProps.isGroupChat == true) {
-					var checkedArray = this.state.optionsChecked;
+					var checkedArray = [this.props.user["_id"]];
 					var users = nextProps.users;
 					for (var yy = 0; yy < users.length; yy++) {
 						var user = users[yy];
@@ -23337,8 +23344,7 @@ var ChatBox = function (_Component) {
 							checkedArray.push(user["_id"]);
 						}
 					}
-
-					checkedArray.push(this.props.user["_id"]);
+					//checkedArray.push(this.props.user["_id"]);
 					this.setState({ optionsChecked: checkedArray });
 				}
 			}
@@ -23404,9 +23410,11 @@ var ChatBox = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
+			var _this2 = this;
+
 			var messages = this.props.messages;
 			var users = this.props.users;
-
+			console.log(messages);
 			var outputCheckboxes = users.map(function (user, i) {
 				return _react2.default.createElement(
 					'div',
@@ -23435,9 +23443,13 @@ var ChatBox = function (_Component) {
 
 								return _react2.default.createElement(
 									'div',
-									{ key: item._id },
-									' ',
-									item.message
+									{ key: item._id, className: 'hm-message-div' },
+									_react2.default.createElement(
+										'span',
+										{ className: "hm-message-span " + (item.ownerId == _this2.props.user._id ? "hm-message-owner" : "hm-message-not-owner") },
+										' ',
+										item.message
+									)
 								);
 							})
 						)
@@ -23462,7 +23474,7 @@ var ChatBox = function (_Component) {
 						outputCheckboxes,
 						_react2.default.createElement(
 							'button',
-							{ className: 'btn btn-default', type: 'submit' },
+							{ className: 'btn btn-success', type: 'submit' },
 							'Save'
 						)
 					)
@@ -23553,9 +23565,9 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = __webpack_require__(15);
 
-var _Nav = __webpack_require__(33);
+var _DashboardNav = __webpack_require__(264);
 
-var _Nav2 = _interopRequireDefault(_Nav);
+var _DashboardNav2 = _interopRequireDefault(_DashboardNav);
 
 var _UsersList = __webpack_require__(133);
 
@@ -23812,11 +23824,12 @@ var Dashboard = function (_Component) {
 			return _react2.default.createElement(
 				'div',
 				{ className: 'wrapper' },
+				_react2.default.createElement(_DashboardNav2.default, null),
 				_react2.default.createElement(
 					'div',
 					{ className: 'sideBar' },
-					_react2.default.createElement(_UsersList2.default, { users: this.state.users, changeChatRoom: this.onChangeChatRoom.bind(this) }),
-					_react2.default.createElement(_RoomsList2.default, { notifyNewGroupMessage: this.state.notifyNewGroupMessage, changeChatRoom: this.onChangeChatRoom.bind(this), user: this.state.user })
+					_react2.default.createElement(_UsersList2.default, { roomId: this.state.roomId, users: this.state.users, changeChatRoom: this.onChangeChatRoom.bind(this) }),
+					_react2.default.createElement(_RoomsList2.default, { roomId: this.state.roomId, notifyNewGroupMessage: this.state.notifyNewGroupMessage, changeChatRoom: this.onChangeChatRoom.bind(this), user: this.state.user })
 				),
 				_react2.default.createElement(
 					'div',
@@ -23956,7 +23969,7 @@ var RoomsList = function (_Component) {
 	}, {
 		key: 'onCreateRoom',
 		value: function onCreateRoom() {
-			socket.emit("room:create", { name: this.state.roomName });
+			socket.emit("room:create", { name: this.state.roomName, owner: this.props.user._id });
 		}
 	}, {
 		key: 'render',
@@ -23970,12 +23983,12 @@ var RoomsList = function (_Component) {
 				null,
 				_react2.default.createElement(
 					'div',
-					{ className: '' },
-					'Rooms list'
+					{ className: 'sidebar-rooms-list-label' },
+					'Rooms'
 				),
 				_react2.default.createElement(
 					'div',
-					null,
+					{ className: 'add-room-wrapper' },
 					_react2.default.createElement('input', { type: 'text', onChange: this.onChangeRoomNameVal, className: '', placeholder: 'Room name' }),
 					_react2.default.createElement(
 						'button',
@@ -23988,24 +24001,24 @@ var RoomsList = function (_Component) {
 					null,
 					_react2.default.createElement(
 						'ul',
-						{ className: '' },
+						{ className: 'main-nav rooms-list-ul' },
 						rooms.map(function (room) {
 
 							return _react2.default.createElement(
 								'li',
-								{ key: room._id, onClick: function onClick() {
+								{ key: room._id, className: _this3.props.roomId == room._id ? "selected-room" : "", onClick: function onClick() {
 										return _this3.props.changeChatRoom(room._id, true);
 									} },
 								_react2.default.createElement(
 									'a',
 									{ href: '#' },
 									room.name,
-									_react2.default.createElement(
+									room.notification > 0 ? _react2.default.createElement(
 										'span',
-										null,
-										'---',
+										{ className: 'notification-counter' },
+										' ',
 										room.notification
-									)
+									) : ""
 								)
 							);
 						})
@@ -24404,32 +24417,32 @@ var UsersList = function (_Component) {
 				null,
 				_react2.default.createElement(
 					'div',
-					{ className: '' },
-					'Users list'
+					{ className: 'sidebar-users-list-label' },
+					'Users'
 				),
 				_react2.default.createElement(
 					'div',
 					null,
 					_react2.default.createElement(
 						'ul',
-						{ className: 'main-nav' },
+						{ className: 'main-nav users-list-ul' },
 						users.map(function (user) {
 
 							return _react2.default.createElement(
 								'li',
-								{ key: user._id, onClick: function onClick() {
+								{ key: user._id, className: _this2.props.roomId == user._id ? "selected-room" : "", onClick: function onClick() {
 										return _this2.props.changeChatRoom(user._id, false);
 									} },
 								_react2.default.createElement(
 									'a',
 									{ href: '#' },
 									user.username,
-									_react2.default.createElement(
+									user.notification > 0 ? _react2.default.createElement(
 										'span',
-										null,
-										' --- ',
+										{ className: 'notification-counter' },
+										' ',
 										user.notification
-									)
+									) : ""
 								)
 							);
 						})
@@ -24483,7 +24496,7 @@ exports = module.exports = __webpack_require__(136)(undefined);
 exports.push([module.i, "@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);", ""]);
 
 // module
-exports.push([module.i, "body {\n\tfont-family: 'Open Sans', Tahoma, Arial;\n}\n\n.wrapper {\n\tpadding-left: 250px;\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n.wrapper .main-section{\n\theight: 100%;\n    float: left;\n    width: 100%;\n    position: absolute;\n}\n.wrapper .content {\n\theight: 100%;\n\tposition:relative;\n}\n.wrapper.toggled {\n\tpadding-left: 0;\n}\n.wrapper.toggled #sideBar {\n\tleft: -300px;\n\topacity: 0;\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n\n.sideBar {\n\twidth: 250px;\n\tposition: fixed;\n\topacity: .99;\n\tleft: 0;\n\tbackground: #64676c;\n\theight: 100%;\n\toverflow-y: auto;\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n\n.main-nav {\n\tlist-style-type: none;\n\t-webkit-margin-before: 0px;\n\t-webkit-margin-after: 0px;\n\t-webkit-margin-start: 0px;\n\t-webkit-margin-end: 0px;\n\t-webkit-padding-start: 0px;\n\tmargin-bottom: 0;\n}\n.main-nav li {\n\tline-height: 40px;\n\tpadding: 0 15px;\n\tborder-bottom: 1px solid #585858;\n\tbox-shadow: 0px 1px 1px rgba(255, 255, 255, 0.12);\n}\n.main-nav li.main-search {\n\tborder: none;\n\tbox-shadow: none;\n}\n.main-nav li.main-search .search-input.form-control {\n\tborder-radius: 0;\n\tbackground: #444;\n\tborder: none;\n\tcolor: #fff;\n\tfont-size: 12px;\n\tfont-weight: normal;\n}\n.main-nav li.main-search i {\n\tfloat: right;\n\tmargin-top: -25px;\n\tmargin-right: 15px;\n\tcolor: #999;\n}\n.main-nav li.nav-brand {\n\theight: 80px;\n\tline-height: 80px;\n\tfont-size: 18px;\n\tborder: none;\n\tbox-shadow: none;\n}\n.main-nav li a {\n\tcolor: #fff;\n\tdisplay: block;\n\tfont-weight: normal;\n\ttext-decoration: none;\n}\n.main-section{\n\twidth:calc(100% - 250px) !important;\n}\n/*Chatbox Component*/\n.chatbox-wrapper{\n\theight: 100%;\n\tposition: relative;\n\twidth: 100%;\n}\n.chatbox-wrapper .chat-type-here{\n\n\n    bottom: 0px;\n\twidth: 100%;\n\tpadding:15px;\n}\n.chatbox{\n\tfloat: left;\n    width: 80%;\n    height: 100%;\n}\n.chatbox-full-width{\n\twidth: 100%;\n}\n.chatbox-participants{\n\tfloat: right;\n\twidth: 20%;\n}\n.chatbox-wrapper .chatbox-conversation{\n\tbottom: 61px;\n\theight: calc(100% - 56px) !important;\n    padding: 20px;\n}\n.chatbox-conversation-messages{\n\tposition: absolute;\n    bottom: 70px;\n}\n@media (max-width: 768px) {\n\t#wrapper {\n\t\tpadding-left: 0;\n\t}\n\t#wrapper.toggled {\n\t\tpadding-left: 250px;\n\t}\n\t#wrapper.toggled #sideBar {\n\t\tleft: 0;\n\t\topacity: 1;\n\t}\n\n\t#sideBar {\n\t\tleft: -300px;\n\t}\n}\n", ""]);
+exports.push([module.i, "body {\n\tfont-family: 'Open Sans', Tahoma, Arial;\n}\nhtml, body {\n      overflow: hidden;\n }\n.wrapper {\n\t\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n.sidebar-users-list-label{\n\t    text-align: center;\n    color: #1b957f;\n    font-size: 15px;\n    padding: 6px;\n    background-color: #d8d8d8;\n    border: 1px solid #1b957f;\n\n}\n.chatbox-participants{\n\t    height: 100%;\n    border: 1px solid #d4c8c8;\n    border-radius: 4px;\n    padding: 10px;\n    right: 10px;\n    /* float: right; */\n    position: relative;\n    margin-top: 10px;\n}\n.chatbox-participants label{\n\tmargin-left: 4px;\n}\n.main-nav{\n\tpadding: 0px;\n}\n.add-room-wrapper{\n\tmargin: 10px;\n}\n.create-new-room{\n\tmargin-left: 2px;\n}\n.sidebar-rooms-list-label{\n\t    text-align: center;\n    color: #1b957f;\n    font-size: 15px;\n    padding: 6px;\n    background-color: #d8d8d8;\n    border: 1px solid #1b957f;\n\n}\n.users-list-ul li:hover a{\n\tcursor: pointer;\n\tcolor: #1b1b1b;\n}\n.selected-room{\n\t    background-color: #18947d;\n}\n.notification-counter{\n\tfloat: right;\n\tmargin-right: 5px;\n}\n.wrapper .main-section{\n\t    height: calc(100% - 127px);\n    float: left;\n    top: 65px;\n    left: 250px;\n    position: absolute;\n    z-index: 0;\n    overflow: auto;\n}\n.wrapper .content {\n\theight: 100%;\n\tposition:relative;\n}\n.wrapper.toggled {\n\tpadding-left: 0;\n}\n.wrapper.toggled #sideBar {\n\tleft: -300px;\n\topacity: 0;\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n\n.sideBar {\n\ttop:65px;\n\twidth: 250px;\n\tposition: fixed;\n\topacity: .99;\n\tleft: 0;\n\tbackground: #64676c;\n\theight: 100%;\n\toverflow-y: auto;\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n\n.main-nav {\n\tlist-style-type: none;\n\t-webkit-margin-before: 0px;\n\t-webkit-margin-after: 0px;\n\t-webkit-margin-start: 0px;\n\t-webkit-margin-end: 0px;\n\t-webkit-padding-start: 0px;\n\tmargin-bottom: 0;\n}\n.main-nav li {\n\tline-height: 40px;\n\tpadding: 0 15px;\n\tborder-bottom: 1px solid #585858;\n\tbox-shadow: 0px 1px 1px rgba(255, 255, 255, 0.12);\n}\n.main-nav li.main-search {\n\tborder: none;\n\tbox-shadow: none;\n}\n.main-nav li.main-search .search-input.form-control {\n\tborder-radius: 0;\n\tbackground: #444;\n\tborder: none;\n\tcolor: #fff;\n\tfont-size: 12px;\n\tfont-weight: normal;\n}\n.main-nav li.main-search i {\n\tfloat: right;\n\tmargin-top: -25px;\n\tmargin-right: 15px;\n\tcolor: #999;\n}\n.main-nav li.nav-brand {\n\theight: 80px;\n\tline-height: 80px;\n\tfont-size: 18px;\n\tborder: none;\n\tbox-shadow: none;\n}\n.main-nav li a {\n\tcolor: #fff;\n\tdisplay: block;\n\tfont-weight: normal;\n\ttext-decoration: none;\n}\n.main-section{\n\twidth:calc(100% - 250px) !important;\n}\n/*Chatbox Component*/\n.chatbox-wrapper{\n\t/*height: 100%;\n\tposition: relative;\n\twidth: 100%;*/\n}\n.chatbox-wrapper  .chat-type-here{\n\tpadding:15px;\n\twidth: 100%;\n}\n.chatbox-wrapper .chat-type-here-box{\n\t position: fixed;\n    bottom: 0px;\n    width: 100%;\n\t\n}\n.chatbox{\n\tfloat: left;\n    width: 80%;\n    height: 100%;\n}\n.chatbox-full-width{\n\twidth: 100%;\n}\n.chatbox-participants{\n\tfloat: right;\n\twidth: 20%;\n}\n.chatbox-wrapper .chatbox-conversation{\n\tpadding: 0px 0px 0px 15px;\n}\n.chatbox-conversation-messages{\n\t/*position: absolute;\n    bottom: 70px;*/\n}\n\n.chatbox-wrapper .hm-message-div{\n\tposition: relative;\n    margin: 20px 0px 20px 0px;\n}\n.chatbox-wrapper .hm-message-span{\n\t   padding: 4px 15px 4px 15px;\n    border-radius: 14px;\n}\n.chatbox-wrapper .hm-message-owner{\n\n    border: 1px solid #34a734;\n    background-color: #5cb85c;\n\t color: white;\n\n}\n.chatbox-wrapper .hm-message-not-owner{\n\n    border: 1px solid #dedede;\n    background-color: #e0e0e0;\n    color: #464444;\n\n}\n/*Dashboard Nav Component*/\n.dashboard-nav{\n\tposition: fixed;\n\theight:65px;\n\twidth: 100%;\n\tz-index: 1;\n\t/*float: left;\n    width: 100%;\n    padding-right: 25px;*/\n}\n.navbar {\n\tmargin-bottom: 0px !important;\n}\n@media (max-width: 768px) {\n\t#wrapper {\n\t\tpadding-left: 0;\n\t}\n\t#wrapper.toggled {\n\t\tpadding-left: 250px;\n\t}\n\t#wrapper.toggled #sideBar {\n\t\tleft: 0;\n\t\topacity: 1;\n\t}\n\n\t#sideBar {\n\t\tleft: -300px;\n\t}\n}\n", ""]);
 
 // exports
 
@@ -40005,6 +40018,93 @@ var valueEqual = function valueEqual(a, b) {
 };
 
 exports.default = valueEqual;
+
+/***/ }),
+/* 264 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(4);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = __webpack_require__(15);
+
+var _axios = __webpack_require__(16);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DashboardNav = function (_Component) {
+  _inherits(DashboardNav, _Component);
+
+  function DashboardNav() {
+    _classCallCheck(this, DashboardNav);
+
+    return _possibleConstructorReturn(this, (DashboardNav.__proto__ || Object.getPrototypeOf(DashboardNav)).apply(this, arguments));
+  }
+
+  _createClass(DashboardNav, [{
+    key: 'signout',
+    value: function signout() {
+      _axios2.default.post('/auth/signout/');
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'nav',
+        { className: 'dashboard-nav navbar navbar-default' },
+        _react2.default.createElement(
+          'div',
+          { className: 'navbar-header' },
+          _react2.default.createElement(
+            _reactRouter.Link,
+            { className: 'navbar-brand', to: '/' },
+            'Kevin HomeLike'
+          )
+        ),
+        _react2.default.createElement(
+          'ul',
+          { className: 'nav navbar-nav navbar-right' },
+          _react2.default.createElement(
+            'li',
+            null,
+            _react2.default.createElement(
+              _reactRouter.Link,
+              { to: '/signin' },
+              _react2.default.createElement(
+                'button',
+                { onClick: this.signout, className: 'btn btn-danger log' },
+                'Signout ',
+                this.props.username
+              )
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return DashboardNav;
+}(_react.Component);
+
+exports.default = DashboardNav;
 
 /***/ })
 /******/ ]);

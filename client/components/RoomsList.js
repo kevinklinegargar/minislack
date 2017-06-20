@@ -63,7 +63,7 @@ class RoomsList extends Component {
 		
 	}
 	onCreateRoom(){
-		socket.emit("room:create",{name:this.state.roomName});
+		socket.emit("room:create",{name:this.state.roomName,owner:this.props.user._id});
 		
 
 	}
@@ -72,17 +72,17 @@ class RoomsList extends Component {
 
 		return (
             <div>
-				<div className="">Rooms list</div>
-				<div>
+				<div className="sidebar-rooms-list-label">Rooms</div>
+				<div className="add-room-wrapper">
 					<input type="text"  onChange={this.onChangeRoomNameVal} className="" placeholder="Room name"/>
 					<button className="create-new-room" onClick={this.onCreateRoom.bind(this)}>+ Room</button>
 				</div>
 				
 				<div>
-					<ul className="">
+					<ul className="main-nav rooms-list-ul">
 						{rooms.map(room => {
 							
-							return <li key={room._id} onClick={()=>this.props.changeChatRoom(room._id,true)}><a href="#">{room.name}<span>---{room.notification}</span></a></li>;
+							return <li key={room._id} className={this.props.roomId == room._id?"selected-room":""} onClick={()=>this.props.changeChatRoom(room._id,true)}><a href="#">{room.name}{room.notification > 0?<span className="notification-counter"> {room.notification}</span>:""}</a></li>;
 						})}
 					</ul>
 				</div>

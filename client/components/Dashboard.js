@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 var $ = require('jquery');
-import Nav from './Nav';
+import DashboardNav from './DashboardNav';
 import UsersList from './UsersList';
 import RoomsList from './RoomsList';
 import ChatBox from './ChatBox';
@@ -21,8 +21,11 @@ class Dashboard extends Component {
 			notifyNewGroupMessage:{}
 		};
 		
+		
 	}
+
 	componentDidMount(){
+		
 		axios.post('auth/user/details')
 		.then(response => {
 			
@@ -50,6 +53,7 @@ class Dashboard extends Component {
 			this.context.router.transitionTo('signin');	
 		});
 		
+		
 	}
 	_initSocketEvents(){
 
@@ -64,7 +68,8 @@ class Dashboard extends Component {
 	getPrivateMessage(userId_1,userId_2){
 		axios.post("message/private",{userId_1:userId_1,userId_2:userId_2}).then(response => {
 			
-			this.setState({messages:response.data})
+			this.setState({messages:response.data});
+			
 		}).catch(e => {
 			console.log("error");
 			console.log(e);
@@ -202,17 +207,19 @@ class Dashboard extends Component {
 		this.setState({messages:messages});
 		socket.emit("send:message",newMessage);
 	}
-	render() {
 
+	render() {
+	
 		return (
-        
+		
 			<div className="wrapper">
-			
+				 <DashboardNav/>
 				<div className="sideBar">
-					<UsersList users={this.state.users} changeChatRoom={this.onChangeChatRoom.bind(this)} />
-					<RoomsList  notifyNewGroupMessage={this.state.notifyNewGroupMessage} changeChatRoom={this.onChangeChatRoom.bind(this)} user={this.state.user}/>
+					<UsersList roomId={this.state.roomId} users={this.state.users} changeChatRoom={this.onChangeChatRoom.bind(this)} />
+					<RoomsList  roomId={this.state.roomId} notifyNewGroupMessage={this.state.notifyNewGroupMessage} changeChatRoom={this.onChangeChatRoom.bind(this)} user={this.state.user}/>
 				</div>
 				<div className="main-section">
+					
 					<div className="content">
 						<ChatBox 
 						isGroupChat={this.state.isGroupChat} 
@@ -223,6 +230,7 @@ class Dashboard extends Component {
 						user={this.state.user}
 						/>
 					</div>
+					
 				</div>
                 
 				

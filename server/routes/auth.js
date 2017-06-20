@@ -42,12 +42,10 @@ router.post('/signin',
 		res.send(true);
 });
 
-router.get('/logout', function(req, res){
+router.post('/signout', function(req, res){
+
 	req.logout();
-
-	//req.flash('success_msg', 'You are logged out');
-
-	res.redirect('/login');
+	res.send(true);
 });
 
 router.post('/signup', (req, res) => {

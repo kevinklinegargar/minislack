@@ -13,14 +13,17 @@ class ChatBox extends Component {
 		}
 		this.ioUpdateParticipants = this.ioUpdateParticipants.bind(this);
 	}
+	componentDidUpdate() {
+		$(".main-section").animate({ scrollTop:88888 }, 0);
+	}
 	componentDidMount(){
-	
+		$(".main-section").animate({ scrollTop:88888 }, 0);
 	}
 	componentWillReceiveProps(nextProps){
 	
 		if(nextProps.roomId !== this.props.roomId){
 			if(nextProps.isGroupChat  == true ){
-					let checkedArray = this.state.optionsChecked;
+					let checkedArray = [this.props.user["_id"]];
 					let users = nextProps.users;
 					for(var yy =0;yy < users.length;yy++){
 							var user = users[yy];
@@ -29,8 +32,7 @@ class ChatBox extends Component {
 								checkedArray.push(user["_id"]);
 							}
 						}
-					
-						checkedArray.push(this.props.user["_id"]);
+						//checkedArray.push(this.props.user["_id"]);
 						this.setState({optionsChecked: checkedArray});
 					
 			}	
@@ -104,20 +106,20 @@ class ChatBox extends Component {
 	render() {
 		var messages = this.props.messages;
 		let users = this.props.users;
-	
+		console.log(messages);
 		let outputCheckboxes = users.map(function(user, i){
         	return (<div key={user._id}><CheckBox checked={user.participant} value={user._id} id={'string_' + user._id} onChange={this.toggleCheckBox.bind(this)} /><label htmlFor={'string_' + i}>{user.username}</label></div>)
         }, this);
 		return (
-            
+      
 			<div className="chatbox-wrapper">
-
+					     
 					<div className="chatbox" className ={ this.props.isGroupChat == false?'chatbox chatbox-full-width':'chatbox'}>
 						<div className="chatbox-conversation">
 							<div className="chatbox-conversation-messages">
 							{messages.map(item => {
 									
-									return <div key={item._id}> {item.message}</div>;
+									return <div key={item._id} className="hm-message-div"><span  className={"hm-message-span "+(item.ownerId == this.props.user._id?"hm-message-owner":"hm-message-not-owner")}> {item.message}</span></div>;
 							})}
 							</div>
 						</div>
@@ -131,7 +133,7 @@ class ChatBox extends Component {
 							<form onSubmit={this.ioUpdateParticipants}>
 								{outputCheckboxes}
 							
-								<button className="btn btn-default" type="submit">Save</button>
+								<button className="btn btn-success" type="submit">Save</button>
 							</form>
 						</div>
 						:

@@ -64,8 +64,10 @@ module.exports = function (socket) {
 	});
 	socket.on("room:create",function(data){
 		 var name = data.name ;
+		 var owner = data.owner;
 		var newRoom = new Room({
-					name:name
+					name:name,
+					participants:[owner]
 			});
 		Room.createRoom(newRoom,function(err,room){
 			if(err) throw err;
