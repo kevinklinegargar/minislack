@@ -89,23 +89,42 @@ body {
 	font-weight: normal;
 	text-decoration: none;
 }
-
+.main-section{
+	width:calc(100% - 250px) !important;
+}
 /*Chatbox Component*/
 .chatbox-wrapper{
 	height: 100%;
 	position: relative;
+	width: 100%;
 }
 .chatbox-wrapper .chat-type-here{
 
-	position: absolute;
+
     bottom: 0px;
 	width: 100%;
 	padding:15px;
 }
+.chatbox{
+	float: left;
+    width: 80%;
+    height: 100%;
+}
+.chatbox-full-width{
+	width: 100%;
+}
+.chatbox-participants{
+	float: right;
+	width: 20%;
+}
 .chatbox-wrapper .chatbox-conversation{
 	bottom: 61px;
-    position: absolute;
+	height: calc(100% - 56px) !important;
     padding: 20px;
+}
+.chatbox-conversation-messages{
+	position: absolute;
+    bottom: 70px;
 }
 @media (max-width: 768px) {
 	#wrapper {

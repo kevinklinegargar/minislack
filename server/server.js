@@ -19,6 +19,7 @@ var apiRoutes = require('./routes/api');
 var authRoutes = require('./routes/auth');
 var userRoutes = require('./routes/user');
 var messageRoutes = require('./routes/message');
+var roomRoutes = require('./routes/room');
 var socket = require('./routes/socket');
 var bodyParser = require('body-parser');
 
@@ -102,9 +103,11 @@ app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
 app.use('/user',userRoutes);
 app.use('/message',messageRoutes);
+app.use('/room',roomRoutes);
 
 app.get('*', function(req, res){
   res.redirect('/');
 });
 io.sockets.on('connection', socket);
+app.set('socketio', io);
 module.exports = server;

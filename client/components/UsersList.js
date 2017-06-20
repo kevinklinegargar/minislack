@@ -20,7 +20,7 @@ class UsersList extends Component {
 					<ul className="main-nav">
 						{users.map(user => {
 							
-							return <li key={user._id} onClick={()=>this.props.changeChatRoom(user._id,false)}><a href="#">{user.username}</a></li>;
+							return <li key={user._id} onClick={()=>this.props.changeChatRoom(user._id,false)}><a href="#">{user.username}<span> --- {user.notification}</span></a></li>;
 						})}
 					</ul>
 				</div>

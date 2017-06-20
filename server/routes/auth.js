@@ -55,13 +55,7 @@ router.post('/signup', (req, res) => {
 	var email = req.body.email;
 	var username = req.body.username;
 	var password = req.body.password;
-
-	// Validation
-	// req.checkBody('email', 'Email is required').notEmpty();
-	// req.checkBody('email', 'Email is not valid').isEmail();
-	// req.checkBody('username', 'Username is required').notEmpty();
-	// req.checkBody('password', 'Password is required').notEmpty();
-
+	var socket = req.app.get('socketio');
 
 	//var errors = false || req.validationErrors();
 	var errors = false;
@@ -80,11 +74,10 @@ router.post('/signup', (req, res) => {
 		
 		User.createUser(newUser, function(err, user){
 			if(err) throw err;
-		
+			socket.emit("new:user",user);
 		});
-
-		//req.flash('success_msg', 'You are registered and can now login');
-
+	
+    	
 		res.send(true);
 	}
 });

@@ -12,6 +12,14 @@ router.post('/private/',(req,res) => {
         res.json(messages);
     });
 });
+router.post('/room/',(req,res) => {
+    var id = req.body.id ;
+
+    Message.getRoomMessages(id,function(err,messages){
+        if(err) throw err;
+        res.json(messages);
+    });
+});
 
 
 module.exports = router;

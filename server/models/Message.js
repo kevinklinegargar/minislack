@@ -39,6 +39,14 @@ Message.getPrivateMessages= function(userId_1,userId_2,callback){
 		callback
 	)
 }
+Message.getRoomMessages= function(id,callback){
+
+	Message.find(
+		{roomId:id},
+		{},
+		callback
+	)
+}
 
 
 module.exports = Message;

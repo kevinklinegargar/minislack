@@ -10,20 +10,16 @@ class Signup extends Component {
 		super();
 		this.state = {};
 		this.state.error = "";
-		this.state.email = "kevin@gmailc.com";
-		this.state.password = "kevinklinegargargar2";
-        this.state.username = "kevin";
+		this.state.email = "";
+		this.state.password = "";
+        this.state.username = "";
 		this.base_url = 'http://localhost:8000';
-		// this.showSessionMsg = props.location.query? props.location.query.session:true;
-		// this._handlePasswordChange = this._handlePasswordChange.bind(this);
-		// this._handleEmailChange = this._handleEmailChange.bind(this);
 		this._onSubmit = this._onSubmit.bind(this);
         this._onChange = this._onChange.bind(this);
 		
 	}
 
     _onChange(e) {
-      //   console.log(this);
         var state = {};
         state[e.target.name] =  $.trim(e.target.value);
         this.setState(state);
@@ -31,10 +27,7 @@ class Signup extends Component {
     }
     _onSubmit(e) {
 		e.preventDefault();
-        //console.log(this.state);
-		//console.log("redirect");
-		
-		
+
   		axios.post('auth/signup',{'email':this.state.email,'password':this.state.password,'username':this.state.username
 		}).then( response => {
 			if(response.data === true){
@@ -45,14 +38,6 @@ class Signup extends Component {
 		}).catch( error => {
 			console.log(error);
 		});
-		// if(this.state.errorPassword == '' && this.state.errorEmail == ''){
-		// 	this.setState({error : 'Signing in ...'});
-		// 	auth.login(this.state.email, this.state.password, (loggedIn) => {
-		// 		if (!loggedIn)
-		// 		return this.setState({ error: "Login Failed" })
-
-		// 	})
-		// }
 
 	}
 

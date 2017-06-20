@@ -41,14 +41,6 @@ class Signin extends Component {
 		  .catch( e => {
 			  alert("Wrong username or password.");
 		  });
-		// if(this.state.errorPassword == '' && this.state.errorEmail == ''){
-		// 	this.setState({error : 'Signing in ...'});
-		// 	auth.login(this.state.email, this.state.password, (loggedIn) => {
-		// 		if (!loggedIn)
-		// 		return this.setState({ error: "Login Failed" })
-
-		// 	})
-		// }
 
 	}
 

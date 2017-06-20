@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var Message = require('./../models/Message');
+var Room = require('./../models/Room');
+var User = require('./../models/User');
 // export function for listening to the socket
 module.exports = function (socket) {
 	
@@ -17,50 +19,72 @@ module.exports = function (socket) {
 		Message.createMessage(newMessage,function(err,res){
 			 if(err) throw err;
 			 if(res){
-	
-				socket.broadcast.emit("receive:message:"+newMessage["roomId"],newMessage);
+				if(newMessage.isGroupChat == true){
+					
+					Room.getRoomsDetailsById(res.roomId,function(err,room){
+							if(err) throw err;
+					
+							var roomId = room["_id"];
+							var participants = room["participants"];
+							for(var xx =0;xx < participants.length;xx++){
+								var participant = participants[xx];
+							
+								socket.broadcast.emit("receive:message:"+participant,newMessage);	  
+							}
+					});
+
+
+
+
+				}else{
+					console.log("Private Message.");
+					socket.broadcast.emit("receive:message:"+newMessage["roomId"],newMessage);
+				}
+
+				
 			 } 
 		});
 		
 	})
 
-//   // notify other clients that a new user has joined
-//   socket.broadcast.emit('user:join', {
-//     name: name
-//   });
-
-//   // broadcast a user's message to other users
-//   socket.on('send:message', function (data) {
-//     socket.broadcast.emit('send:message', {
-//       user: name,
-//       text: data.text
-//     });
-//   });
-
-//   // validate a user's name change, and broadcast it on success
-//   socket.on('change:name', function (data, fn) {
-//     if (userNames.claim(data.name)) {
-//       var oldName = name;
-//       userNames.free(oldName);
-
-//       name = data.name;
+	socket.on("participants:update",function(data){
+		var roomId = data.roomId;
+   		var participants = data.participants;
+    	Room.updateParticipants(roomId,participants,function(err,room){
+        	if(err) throw err;
+	
+			var roomId = room["_id"];
+			var participants = room["participants"];
+			for(var xx =0;xx < participants.length;xx++){
+				var participant = participants[xx];
+				socket.broadcast.emit("participants:update:"+participant,room);	  
+			}
+        	//socket.broadcast.emitres.json(room);
+    	});	
+	});
+	socket.on("room:create",function(data){
+		 var name = data.name ;
+		var newRoom = new Room({
+					name:name
+			});
+		Room.createRoom(newRoom,function(err,room){
+			if(err) throw err;
+		
+			User.getAllUsers(function(err,users){
 			
-//       socket.broadcast.emit('change:name', {
-//         oldName: oldName,
-//         newName: name
-//       });
+				for(var ii=0; ii < users.length;ii++){
+					
+					var user = users[ii];
+				
+					socket.emit("new:room:created:"+user["_id"],room);
+					socket.broadcast.emit("new:room:created:"+user["_id"],room);
+			
+					
+				}
+				
+			});
+			
+		});
+	})
 
-//       fn(true);
-//     } else {
-//       fn(false);
-//     }
-//   });
-
-//   // clean up when a user leaves, and broadcast it to other users
-//   socket.on('disconnect', function () {
-//     socket.broadcast.emit('user:left', {
-//       name: name
-//     });
-//     userNames.free(name);
-//   });
 };
