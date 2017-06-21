@@ -9,6 +9,12 @@ router.get('/all',(req,res) => {
         res.json(users);
     });
 });
-
+router.post('/detail',(req,res) => {
+    
+    User.getUserById(req.body.id,function(err,user){
+         if(err) throw err;
+        res.json(user);
+    });
+});
 
 module.exports = router;

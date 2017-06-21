@@ -129,6 +129,7 @@ class ChatBox extends Component {
 							{messages.map(item => {
 									
 									return 	<div key={item._id} className="hm-message-div">
+												
 												<span  className={"hm-message-span "+(item.ownerId == this.props.user._id?"hm-message-owner":"hm-message-not-owner")}> {item.message}</span>
 												<br/>
 												{
@@ -141,6 +142,7 @@ class ChatBox extends Component {
 						</div>
 						<div className="chat-type-here-box">
 							<input type="text" onKeyPress={this.handleKeyPress.bind(this)} className="chat-type-here" placeholder="Type here..."/>
+							
 						</div>
 					</div>
 					{this.props.isGroupChat == true ? 
