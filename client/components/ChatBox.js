@@ -103,6 +103,15 @@ class ChatBox extends Component {
 		}
 
 	}
+	getMessageOwnerUsername(userId){
+		var users = this.props.users;
+		for(var xx=0;xx < users.length;xx++){
+			if(userId == users[xx]["_id"]){
+				return "-"+users[xx]["username"];
+			}
+		}
+		return "";
+	}
 	render() {
 		var messages = this.props.messages;
 		let users = this.props.users;
@@ -119,7 +128,14 @@ class ChatBox extends Component {
 							<div className="chatbox-conversation-messages">
 							{messages.map(item => {
 									
-									return <div key={item._id} className="hm-message-div"><span  className={"hm-message-span "+(item.ownerId == this.props.user._id?"hm-message-owner":"hm-message-not-owner")}> {item.message}</span></div>;
+									return 	<div key={item._id} className="hm-message-div">
+												<span  className={"hm-message-span "+(item.ownerId == this.props.user._id?"hm-message-owner":"hm-message-not-owner")}> {item.message}</span>
+												<br/>
+												{
+													this.props.isGroupChat == true?<span className="messagge-owner-name">{this.getMessageOwnerUsername(item.ownerId)}</span>:""
+												}
+												
+											</div>;
 							})}
 							</div>
 						</div>

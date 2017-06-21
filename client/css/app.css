@@ -35,6 +35,11 @@ html, body {
 	width: 100%;
 	margin-top: 10px;
 }
+.messagge-owner-name{
+	font-size: 10px;
+    margin-left: 10px;
+    color: #888585;
+}
 .chatbox-participants{
 	    height: 100%;
     border: 1px solid #d4c8c8;

@@ -179,12 +179,25 @@ class Dashboard extends Component {
 				}
 			}
 		}else{
-			this.getRoomMessage(id);
-			this.setState({notifyNewGroupMessage:{id:id,message:false,action:"clear"}});
+			
+			var isParticipant = false;
 			axios.post('room/details',{roomId:id}).then( room =>{
 		
 					var participants = room.data.participants;
-					this.updateRoomParticipants(id,participants);
+					for(var nn = 0; nn < participants.length;nn++){
+						var participant = participants[nn];
+						if(this.state.user._id == participant){
+							isParticipant = true;
+						}
+					}
+					if(isParticipant == true){
+						this.getRoomMessage(id);
+						this.setState({notifyNewGroupMessage:{id:id,message:false,action:"clear"}});
+						this.updateRoomParticipants(id,participants);
+					}else{
+						alert("This is a private room. Your eyes are not allowed.");
+					}
+					
 			
 			
 				}).catch(e => {

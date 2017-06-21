@@ -23408,6 +23408,17 @@ var ChatBox = function (_Component) {
 			}
 		}
 	}, {
+		key: 'getMessageOwnerUsername',
+		value: function getMessageOwnerUsername(userId) {
+			var users = this.props.users;
+			for (var xx = 0; xx < users.length; xx++) {
+				if (userId == users[xx]["_id"]) {
+					return "-" + users[xx]["username"];
+				}
+			}
+			return "";
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
@@ -23449,7 +23460,13 @@ var ChatBox = function (_Component) {
 										{ className: "hm-message-span " + (item.ownerId == _this2.props.user._id ? "hm-message-owner" : "hm-message-not-owner") },
 										' ',
 										item.message
-									)
+									),
+									_react2.default.createElement('br', null),
+									_this2.props.isGroupChat == true ? _react2.default.createElement(
+										'span',
+										{ className: 'messagge-owner-name' },
+										_this2.getMessageOwnerUsername(item.ownerId)
+									) : ""
 								);
 							})
 						)
@@ -23791,12 +23808,24 @@ var Dashboard = function (_Component) {
 					}
 				}
 			} else {
-				this.getRoomMessage(id);
-				this.setState({ notifyNewGroupMessage: { id: id, message: false, action: "clear" } });
+
+				var isParticipant = false;
 				_axios2.default.post('room/details', { roomId: id }).then(function (room) {
 
 					var participants = room.data.participants;
-					_this7.updateRoomParticipants(id, participants);
+					for (var nn = 0; nn < participants.length; nn++) {
+						var participant = participants[nn];
+						if (_this7.state.user._id == participant) {
+							isParticipant = true;
+						}
+					}
+					if (isParticipant == true) {
+						_this7.getRoomMessage(id);
+						_this7.setState({ notifyNewGroupMessage: { id: id, message: false, action: "clear" } });
+						_this7.updateRoomParticipants(id, participants);
+					} else {
+						alert("This is a private room. Your eyes are not allowed.");
+					}
 				}).catch(function (e) {
 					console.log(e);
 				});
@@ -24583,7 +24612,7 @@ exports = module.exports = __webpack_require__(137)(undefined);
 exports.push([module.i, "@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);", ""]);
 
 // module
-exports.push([module.i, "body {\n\tfont-family: 'Open Sans', Tahoma, Arial;\n}\nhtml, body {\n      overflow: hidden;\n }\n.wrapper {\n\t\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n.sidebar-users-list-label{\n\t    text-align: center;\n    color: #1b957f;\n    font-size: 15px;\n    padding: 6px;\n    background-color: #d8d8d8;\n    border: 1px solid #1b957f;\n\n}\n\n.hm-main-nav .hm-main-nav-right-link{\n\tmargin-right: 20px;\n}\n.form-signin, .form-signup{\n\tposition: relative;\n    width: 300px;\n    left: 50%;\n    margin-left: -150px;\n    margin-top: 100px;\n}\n.btn-signin,.btn-signup{\n\twidth: 100%;\n\tmargin-top: 10px;\n}\n.chatbox-participants{\n\t    height: 100%;\n    border: 1px solid #d4c8c8;\n    border-radius: 4px;\n    padding: 10px;\n    right: 10px;\n    /* float: right; */\n    position: relative;\n    margin-top: 10px;\n}\n.chatbox-participants label{\n\tmargin-left: 4px;\n}\n.main-nav{\n\tpadding: 0px;\n}\n.add-room-wrapper{\n\tmargin: 10px;\n}\n.create-new-room{\n\tmargin-left: 2px;\n}\n.sidebar-rooms-list-label{\n\t    text-align: center;\n    color: #1b957f;\n    font-size: 15px;\n    padding: 6px;\n    background-color: #d8d8d8;\n    border: 1px solid #1b957f;\n\n}\n.users-list-ul li:hover a{\n\tcursor: pointer;\n\tcolor: #1b1b1b;\n}\n.selected-room{\n\t    background-color: #18947d;\n}\n.notification-counter{\n\tfloat: right;\n\tmargin-right: 5px;\n}\n.wrapper .main-section{\n\t    height: calc(100% - 127px);\n    float: left;\n    top: 65px;\n    left: 250px;\n    position: absolute;\n    z-index: 0;\n    overflow: auto;\n}\n.wrapper .content {\n\theight: 100%;\n\tposition:relative;\n}\n.wrapper.toggled {\n\tpadding-left: 0;\n}\n.wrapper.toggled #sideBar {\n\tleft: -300px;\n\topacity: 0;\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n\n.sideBar {\n\theight: calc(100% - 65px) !important;\n\ttop:65px;\n\twidth: 250px;\n\tposition: fixed;\n\topacity: .99;\n\tleft: 0;\n\tbackground: #64676c;\n\theight: 100%;\n\toverflow-y: auto;\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n\n.main-nav {\n\tlist-style-type: none;\n\t-webkit-margin-before: 0px;\n\t-webkit-margin-after: 0px;\n\t-webkit-margin-start: 0px;\n\t-webkit-margin-end: 0px;\n\t-webkit-padding-start: 0px;\n\tmargin-bottom: 0;\n}\n.main-nav li {\n\tline-height: 40px;\n\tpadding: 0 15px;\n\tborder-bottom: 1px solid #585858;\n\tbox-shadow: 0px 1px 1px rgba(255, 255, 255, 0.12);\n}\n.main-nav li.main-search {\n\tborder: none;\n\tbox-shadow: none;\n}\n.main-nav li.main-search .search-input.form-control {\n\tborder-radius: 0;\n\tbackground: #444;\n\tborder: none;\n\tcolor: #fff;\n\tfont-size: 12px;\n\tfont-weight: normal;\n}\n.main-nav li.main-search i {\n\tfloat: right;\n\tmargin-top: -25px;\n\tmargin-right: 15px;\n\tcolor: #999;\n}\n.main-nav li.nav-brand {\n\theight: 80px;\n\tline-height: 80px;\n\tfont-size: 18px;\n\tborder: none;\n\tbox-shadow: none;\n}\n.main-nav li a {\n\tcolor: #fff;\n\tdisplay: block;\n\tfont-weight: normal;\n\ttext-decoration: none;\n}\n.main-section{\n\twidth:calc(100% - 250px) !important;\n}\n/*Chatbox Component*/\n.chatbox-wrapper{\n\t/*height: 100%;\n\tposition: relative;\n\twidth: 100%;*/\n}\n.chatbox-wrapper  .chat-type-here{\n\tpadding:15px;\n\twidth: 100%;\n}\n.chatbox-wrapper .chat-type-here-box{\n\t position: fixed;\n    bottom: 0px;\n    width: 100%;\n\t\n}\n.chatbox{\n\tfloat: left;\n    width: 80%;\n    height: 100%;\n}\n.chatbox-full-width{\n\twidth: 100%;\n}\n.chatbox-participants{\n\tfloat: right;\n\twidth: 20%;\n}\n.chatbox-wrapper .chatbox-conversation{\n\tpadding: 0px 0px 0px 15px;\n}\n.chatbox-conversation-messages{\n\t/*position: absolute;\n    bottom: 70px;*/\n}\n\n.chatbox-wrapper .hm-message-div{\n\tposition: relative;\n    margin: 20px 0px 20px 0px;\n}\n.chatbox-wrapper .hm-message-span{\n\t   padding: 4px 15px 4px 15px;\n    border-radius: 14px;\n}\n.chatbox-wrapper .hm-message-owner{\n\n    border: 1px solid #34a734;\n    background-color: #5cb85c;\n\t color: white;\n\n}\n.chatbox-wrapper .hm-message-not-owner{\n\n    border: 1px solid #dedede;\n    background-color: #e0e0e0;\n    color: #464444;\n\n}\n/*Dashboard Nav Component*/\n.dashboard-nav{\n\tposition: fixed;\n\theight:65px;\n\twidth: 100%;\n\tz-index: 1;\n\t/*float: left;\n    width: 100%;\n    padding-right: 25px;*/\n}\n.navbar {\n\tmargin-bottom: 0px !important;\n}\n@media (max-width: 768px) {\n\t#wrapper {\n\t\tpadding-left: 0;\n\t}\n\t#wrapper.toggled {\n\t\tpadding-left: 250px;\n\t}\n\t#wrapper.toggled #sideBar {\n\t\tleft: 0;\n\t\topacity: 1;\n\t}\n\n\t#sideBar {\n\t\tleft: -300px;\n\t}\n}\n", ""]);
+exports.push([module.i, "body {\n\tfont-family: 'Open Sans', Tahoma, Arial;\n}\nhtml, body {\n      overflow: hidden;\n }\n.wrapper {\n\t\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n.sidebar-users-list-label{\n\t    text-align: center;\n    color: #1b957f;\n    font-size: 15px;\n    padding: 6px;\n    background-color: #d8d8d8;\n    border: 1px solid #1b957f;\n\n}\n\n.hm-main-nav .hm-main-nav-right-link{\n\tmargin-right: 20px;\n}\n.form-signin, .form-signup{\n\tposition: relative;\n    width: 300px;\n    left: 50%;\n    margin-left: -150px;\n    margin-top: 100px;\n}\n.btn-signin,.btn-signup{\n\twidth: 100%;\n\tmargin-top: 10px;\n}\n.messagge-owner-name{\n\tfont-size: 10px;\n    margin-left: 10px;\n    color: #888585;\n}\n.chatbox-participants{\n\t    height: 100%;\n    border: 1px solid #d4c8c8;\n    border-radius: 4px;\n    padding: 10px;\n    right: 10px;\n    /* float: right; */\n    position: relative;\n    margin-top: 10px;\n}\n.chatbox-participants label{\n\tmargin-left: 4px;\n}\n.main-nav{\n\tpadding: 0px;\n}\n.add-room-wrapper{\n\tmargin: 10px;\n}\n.create-new-room{\n\tmargin-left: 2px;\n}\n.sidebar-rooms-list-label{\n\t    text-align: center;\n    color: #1b957f;\n    font-size: 15px;\n    padding: 6px;\n    background-color: #d8d8d8;\n    border: 1px solid #1b957f;\n\n}\n.users-list-ul li:hover a{\n\tcursor: pointer;\n\tcolor: #1b1b1b;\n}\n.selected-room{\n\t    background-color: #18947d;\n}\n.notification-counter{\n\tfloat: right;\n\tmargin-right: 5px;\n}\n.wrapper .main-section{\n\t    height: calc(100% - 127px);\n    float: left;\n    top: 65px;\n    left: 250px;\n    position: absolute;\n    z-index: 0;\n    overflow: auto;\n}\n.wrapper .content {\n\theight: 100%;\n\tposition:relative;\n}\n.wrapper.toggled {\n\tpadding-left: 0;\n}\n.wrapper.toggled #sideBar {\n\tleft: -300px;\n\topacity: 0;\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n\n.sideBar {\n\theight: calc(100% - 65px) !important;\n\ttop:65px;\n\twidth: 250px;\n\tposition: fixed;\n\topacity: .99;\n\tleft: 0;\n\tbackground: #64676c;\n\theight: 100%;\n\toverflow-y: auto;\n\t-webkit-transition: all .25s ease-in-out;\n\t-moz-transition: all .25s ease-in-out;\n\ttransition: all .25s ease-in-out;\n}\n\n.main-nav {\n\tlist-style-type: none;\n\t-webkit-margin-before: 0px;\n\t-webkit-margin-after: 0px;\n\t-webkit-margin-start: 0px;\n\t-webkit-margin-end: 0px;\n\t-webkit-padding-start: 0px;\n\tmargin-bottom: 0;\n}\n.main-nav li {\n\tline-height: 40px;\n\tpadding: 0 15px;\n\tborder-bottom: 1px solid #585858;\n\tbox-shadow: 0px 1px 1px rgba(255, 255, 255, 0.12);\n}\n.main-nav li.main-search {\n\tborder: none;\n\tbox-shadow: none;\n}\n.main-nav li.main-search .search-input.form-control {\n\tborder-radius: 0;\n\tbackground: #444;\n\tborder: none;\n\tcolor: #fff;\n\tfont-size: 12px;\n\tfont-weight: normal;\n}\n.main-nav li.main-search i {\n\tfloat: right;\n\tmargin-top: -25px;\n\tmargin-right: 15px;\n\tcolor: #999;\n}\n.main-nav li.nav-brand {\n\theight: 80px;\n\tline-height: 80px;\n\tfont-size: 18px;\n\tborder: none;\n\tbox-shadow: none;\n}\n.main-nav li a {\n\tcolor: #fff;\n\tdisplay: block;\n\tfont-weight: normal;\n\ttext-decoration: none;\n}\n.main-section{\n\twidth:calc(100% - 250px) !important;\n}\n/*Chatbox Component*/\n.chatbox-wrapper{\n\t/*height: 100%;\n\tposition: relative;\n\twidth: 100%;*/\n}\n.chatbox-wrapper  .chat-type-here{\n\tpadding:15px;\n\twidth: 100%;\n}\n.chatbox-wrapper .chat-type-here-box{\n\t position: fixed;\n    bottom: 0px;\n    width: 100%;\n\t\n}\n.chatbox{\n\tfloat: left;\n    width: 80%;\n    height: 100%;\n}\n.chatbox-full-width{\n\twidth: 100%;\n}\n.chatbox-participants{\n\tfloat: right;\n\twidth: 20%;\n}\n.chatbox-wrapper .chatbox-conversation{\n\tpadding: 0px 0px 0px 15px;\n}\n.chatbox-conversation-messages{\n\t/*position: absolute;\n    bottom: 70px;*/\n}\n\n.chatbox-wrapper .hm-message-div{\n\tposition: relative;\n    margin: 20px 0px 20px 0px;\n}\n.chatbox-wrapper .hm-message-span{\n\t   padding: 4px 15px 4px 15px;\n    border-radius: 14px;\n}\n.chatbox-wrapper .hm-message-owner{\n\n    border: 1px solid #34a734;\n    background-color: #5cb85c;\n\t color: white;\n\n}\n.chatbox-wrapper .hm-message-not-owner{\n\n    border: 1px solid #dedede;\n    background-color: #e0e0e0;\n    color: #464444;\n\n}\n/*Dashboard Nav Component*/\n.dashboard-nav{\n\tposition: fixed;\n\theight:65px;\n\twidth: 100%;\n\tz-index: 1;\n\t/*float: left;\n    width: 100%;\n    padding-right: 25px;*/\n}\n.navbar {\n\tmargin-bottom: 0px !important;\n}\n@media (max-width: 768px) {\n\t#wrapper {\n\t\tpadding-left: 0;\n\t}\n\t#wrapper.toggled {\n\t\tpadding-left: 250px;\n\t}\n\t#wrapper.toggled #sideBar {\n\t\tleft: 0;\n\t\topacity: 1;\n\t}\n\n\t#sideBar {\n\t\tleft: -300px;\n\t}\n}\n", ""]);
 
 // exports
 
