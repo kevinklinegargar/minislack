@@ -15,7 +15,6 @@ var http = require('http');
 // IMPORTS //
 var db = require('./services/db.js');
 var indexRoutes = require('./routes/index');
-var apiRoutes = require('./routes/api');
 var authRoutes = require('./routes/auth');
 var userRoutes = require('./routes/user');
 var messageRoutes = require('./routes/message');
@@ -99,7 +98,6 @@ app.use(function (req, res, next) {
 
 
 app.use('/', indexRoutes);
-app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
 app.use('/user',userRoutes);
 app.use('/message',messageRoutes);

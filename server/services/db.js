@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
-var uri ='localhost:27017/homelike';
+var config = require('./../config/config');
+var uri = config.mongodb.host+":"+config.mongodb.port+"/"+config.mongodb.dbname;
 mongoose.connect(uri);
 // CONNECTION EVENTS
 // When successfully connected
