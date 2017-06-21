@@ -11,9 +11,7 @@ class Header extends Component {
           <Link className="navbar-brand" to="/">Kevin HomeLike</Link>
         </div>
         <ul className="nav navbar-nav">
-          <li>
-            <Link to="/">Dashboard</Link>
-          </li>
+          
          
         </ul>
         <ul className="nav navbar-nav navbar-right hm-main-nav-right-link">

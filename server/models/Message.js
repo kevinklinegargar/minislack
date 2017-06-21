@@ -27,7 +27,7 @@ Message.createMessage = function(newMessage,callback){
 
 }
 Message.getPrivateMessages= function(userId_1,userId_2,callback){
-
+	// Get all the messages between two users. 
 	Message.find(
 		{
 			$or:[

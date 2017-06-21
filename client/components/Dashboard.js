@@ -25,31 +25,28 @@ class Dashboard extends Component {
 	}
 
 	componentDidMount(){
-		
-		axios.post('auth/user/details')
-		.then(response => {
+		// Check if the user is logged in. if not redirect to signin page
+		axios.post('auth/user/details').then(response => {
 			
 			if(response.data){
 				this.setState({user:response.data});
-		
 			}
+			// Get all the registered users
 			this.getAllUsers(users => {
 				if(users.length > 0 ){
+					// If has users. Set the first user as default message room
 					this._initChatRoom(res => {
 						if(res){
-						
+							// Get the messages of the current message room
 							this.getPrivateMessage(this.state.roomId,this.state.user["_id"]);
 						}
 					});
+					// Initialize all the socket listeners and events
 					this._initSocketEvents();
 				}
 			});
-			
-		
-	
-			
-			//socket.on('connected', this._initialize);
 		}).catch( e => {
+			// if not logged in redirect to the signin page.
 			this.context.router.transitionTo('signin');	
 		});
 		
@@ -59,13 +56,14 @@ class Dashboard extends Component {
 
 		socket.on("receive:message:"+this.state.user["_id"],this.ioReceiveMessage.bind(this));
 		socket.on("new:user",this.ioNewUser.bind(this));
-		
 		socket.on("participants:update:"+this.state.user["_id"],(room =>{
 		
 			this.updateRoomParticipants(room._id,room.participants);
 		}));
 	}
+
 	getPrivateMessage(userId_1,userId_2){
+		//Get private message between to users
 		axios.post("message/private",{userId_1:userId_1,userId_2:userId_2}).then(response => {
 			
 			this.setState({messages:response.data});
@@ -76,6 +74,7 @@ class Dashboard extends Component {
 		});
 	}
 	getRoomMessage(id){
+		// Get the room messages by room id
 		axios.post("message/room",{id:id}).then(response => {
 			
 			this.setState({messages:response.data})
@@ -84,13 +83,18 @@ class Dashboard extends Component {
 			console.log(e);
 		});
 	}
+
 	ioNewUser(user){
+		// This is called by the socket event.
+		// This will be execute if there's new user signup. Update the user list real-time
 		user.notification = 0;
 		let users = this.state.users;
 		users = update(users,{$push: [user]});
 		this.setState({users:users});	
 	}
 	ioReceiveMessage(data){
+		// This is called by the socket event.
+		// This will be execute if there's new message for this login user. Then update the message room
 		var messages = this.state.messages;
 		if(data.isGroupChat == false){
 			
@@ -145,6 +149,7 @@ class Dashboard extends Component {
 		
 	}
 	updateRoomParticipants(roomId,participants){
+		// Check and flag the user if its involve in the room
 		let users = this.state.users;
 		for(var xx = 0; xx < users.length;xx++){
 			var user = users[xx];
@@ -165,13 +170,13 @@ class Dashboard extends Component {
 		this.setState({roomId:roomId});
 	}
 	onChangeChatRoom(id,isGroupChat){
-
-		
+		// When the user switch a message room
 		if(isGroupChat == false){
 			this.setState({isGroupChat:isGroupChat});
 			this.setState({roomId:id});
 			this.getPrivateMessage(id,this.state.user["_id"]);
 			let users = this.state.users;
+			// reset the notification indicator it the user will now read the message
 			for(var mm=0;mm < users.length;mm++){
 				var user = users[mm];
 				if(user._id == id){
@@ -181,6 +186,7 @@ class Dashboard extends Component {
 		}else{
 			
 			var isParticipant = false;
+			// If it's group chat get all the room details
 			axios.post('room/details',{roomId:id}).then( room =>{
 		
 					var participants = room.data.participants;
@@ -207,8 +213,7 @@ class Dashboard extends Component {
 
 	}
 	onSendMessage(message){
-		
-		
+		//Update the state.messages and send the message through socket io.
 		var newMessage = {
 			message:message,
 			ownerId:this.state.user["_id"],

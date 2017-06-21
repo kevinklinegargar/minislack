@@ -15954,19 +15954,7 @@ var Header = function (_Component) {
             'Kevin HomeLike'
           )
         ),
-        _react2.default.createElement(
-          'ul',
-          { className: 'nav navbar-nav' },
-          _react2.default.createElement(
-            'li',
-            null,
-            _react2.default.createElement(
-              _reactRouter.Link,
-              { to: '/' },
-              'Dashboard'
-            )
-          )
-        ),
+        _react2.default.createElement('ul', { className: 'nav navbar-nav' }),
         _react2.default.createElement(
           'ul',
           { className: 'nav navbar-nav navbar-right hm-main-nav-right-link' },
@@ -23414,29 +23402,32 @@ var ChatBox = function (_Component) {
 	_createClass(ChatBox, [{
 		key: 'componentDidUpdate',
 		value: function componentDidUpdate() {
+			//Scroll the message box to bottom everytime there's new message.
 			$(".main-section").animate({ scrollTop: 88888 }, 0);
 		}
 	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+			//Scroll the message box to bottom after rendering all the messages.
 			$(".main-section").animate({ scrollTop: 88888 }, 0);
 		}
 	}, {
 		key: 'componentWillReceiveProps',
 		value: function componentWillReceiveProps(nextProps) {
-
+			//Check if the user swtiched to a different room or private message
 			if (nextProps.roomId !== this.props.roomId) {
+				//Update the this.state.optionsChecked for the list of participants involve on this group chat
 				if (nextProps.isGroupChat == true) {
 					var checkedArray = [this.props.user["_id"]];
 					var users = nextProps.users;
 					for (var yy = 0; yy < users.length; yy++) {
 						var user = users[yy];
-						if (user["participant"] == true) {
 
+						//Checked if the login user is also a participant then add it to the array
+						if (user["participant"] == true) {
 							checkedArray.push(user["_id"]);
 						}
 					}
-					//checkedArray.push(this.props.user["_id"]);
 					this.setState({ optionsChecked: checkedArray });
 				}
 			}
@@ -23445,22 +23436,20 @@ var ChatBox = function (_Component) {
 		key: 'ioUpdateParticipants',
 		value: function ioUpdateParticipants(e) {
 			e.preventDefault();
-
+			//Update the db for the new room participants using socketio
 			socket.emit("participants:update", { roomId: this.props.roomId, participants: this.state.optionsChecked });
 		}
 	}, {
 		key: 'toggleCheckBox',
 		value: function toggleCheckBox(event) {
-
+			//Handle the participants checkboxes.
 			var checkedArray = this.state.optionsChecked;
 			var selectedValue = event.target.value;
 
 			if (event.target.checked === true) {
 
 				checkedArray.push(selectedValue);
-				this.setState({
-					optionsChecked: checkedArray
-				});
+				this.setState({ optionsChecked: checkedArray });
 				var users = this.props.users;
 				var userId = event.target.value;
 				for (var yy = 0; yy < users.length; yy++) {
@@ -23490,7 +23479,7 @@ var ChatBox = function (_Component) {
 	}, {
 		key: 'handleKeyPress',
 		value: function handleKeyPress(e) {
-
+			//When the enter pressed, send the message through the parent method
 			if (e.key == "Enter") {
 				var message = e.target.value;
 				if (message !== "") {
@@ -23502,6 +23491,7 @@ var ChatBox = function (_Component) {
 	}, {
 		key: 'getMessageOwnerUsername',
 		value: function getMessageOwnerUsername(userId) {
+			//get the message username by user id
 			var users = this.props.users;
 			for (var xx = 0; xx < users.length; xx++) {
 				if (userId == users[xx]["_id"]) {
@@ -23517,7 +23507,6 @@ var ChatBox = function (_Component) {
 
 			var messages = this.props.messages;
 			var users = this.props.users;
-			console.log(messages);
 			var outputCheckboxes = users.map(function (user, i) {
 				return _react2.default.createElement(
 					'div',
@@ -23735,25 +23724,28 @@ var Dashboard = function (_Component) {
 		value: function componentDidMount() {
 			var _this2 = this;
 
+			// Check if the user is logged in. if not redirect to signin page
 			_axios2.default.post('auth/user/details').then(function (response) {
 
 				if (response.data) {
 					_this2.setState({ user: response.data });
 				}
+				// Get all the registered users
 				_this2.getAllUsers(function (users) {
 					if (users.length > 0) {
+						// If has users. Set the first user as default message room
 						_this2._initChatRoom(function (res) {
 							if (res) {
-
+								// Get the messages of the current message room
 								_this2.getPrivateMessage(_this2.state.roomId, _this2.state.user["_id"]);
 							}
 						});
+						// Initialize all the socket listeners and events
 						_this2._initSocketEvents();
 					}
 				});
-
-				//socket.on('connected', this._initialize);
 			}).catch(function (e) {
+				// if not logged in redirect to the signin page.
 				_this2.context.router.transitionTo('signin');
 			});
 		}
@@ -23764,7 +23756,6 @@ var Dashboard = function (_Component) {
 
 			socket.on("receive:message:" + this.state.user["_id"], this.ioReceiveMessage.bind(this));
 			socket.on("new:user", this.ioNewUser.bind(this));
-
 			socket.on("participants:update:" + this.state.user["_id"], function (room) {
 
 				_this3.updateRoomParticipants(room._id, room.participants);
@@ -23775,6 +23766,7 @@ var Dashboard = function (_Component) {
 		value: function getPrivateMessage(userId_1, userId_2) {
 			var _this4 = this;
 
+			//Get private message between to users
 			_axios2.default.post("message/private", { userId_1: userId_1, userId_2: userId_2 }).then(function (response) {
 
 				_this4.setState({ messages: response.data });
@@ -23788,6 +23780,7 @@ var Dashboard = function (_Component) {
 		value: function getRoomMessage(id) {
 			var _this5 = this;
 
+			// Get the room messages by room id
 			_axios2.default.post("message/room", { id: id }).then(function (response) {
 
 				_this5.setState({ messages: response.data });
@@ -23799,6 +23792,8 @@ var Dashboard = function (_Component) {
 	}, {
 		key: 'ioNewUser',
 		value: function ioNewUser(user) {
+			// This is called by the socket event.
+			// This will be execute if there's new user signup. Update the user list real-time
 			user.notification = 0;
 			var users = this.state.users;
 			users = (0, _reactAddonsUpdate2.default)(users, { $push: [user] });
@@ -23807,6 +23802,8 @@ var Dashboard = function (_Component) {
 	}, {
 		key: 'ioReceiveMessage',
 		value: function ioReceiveMessage(data) {
+			// This is called by the socket event.
+			// This will be execute if there's new message for this login user. Then update the message room
 			var messages = this.state.messages;
 			if (data.isGroupChat == false) {
 
@@ -23865,6 +23862,7 @@ var Dashboard = function (_Component) {
 	}, {
 		key: 'updateRoomParticipants',
 		value: function updateRoomParticipants(roomId, participants) {
+			// Check and flag the user if its involve in the room
 			var users = this.state.users;
 			for (var xx = 0; xx < users.length; xx++) {
 				var user = users[xx];
@@ -23888,11 +23886,13 @@ var Dashboard = function (_Component) {
 		value: function onChangeChatRoom(id, isGroupChat) {
 			var _this7 = this;
 
+			// When the user switch a message room
 			if (isGroupChat == false) {
 				this.setState({ isGroupChat: isGroupChat });
 				this.setState({ roomId: id });
 				this.getPrivateMessage(id, this.state.user["_id"]);
 				var users = this.state.users;
+				// reset the notification indicator it the user will now read the message
 				for (var mm = 0; mm < users.length; mm++) {
 					var user = users[mm];
 					if (user._id == id) {
@@ -23902,6 +23902,7 @@ var Dashboard = function (_Component) {
 			} else {
 
 				var isParticipant = false;
+				// If it's group chat get all the room details
 				_axios2.default.post('room/details', { roomId: id }).then(function (room) {
 
 					var participants = room.data.participants;
@@ -23926,7 +23927,7 @@ var Dashboard = function (_Component) {
 	}, {
 		key: 'onSendMessage',
 		value: function onSendMessage(message) {
-
+			//Update the state.messages and send the message through socket io.
 			var newMessage = {
 				message: message,
 				ownerId: this.state.user["_id"],
@@ -24166,6 +24167,7 @@ var RoomsList = function (_Component) {
 		value: function componentDidMount() {
 			var _this2 = this;
 
+			// Populate all the room in the sidebar
 			_axios2.default.post('room/all').then(function (rooms) {
 				var rooms = rooms.data;
 				for (var xx = 0; xx < rooms.length; xx++) {
@@ -24178,9 +24180,11 @@ var RoomsList = function (_Component) {
 	}, {
 		key: 'componentWillReceiveProps',
 		value: function componentWillReceiveProps(nextProps) {
+			// Wait for the props.user will have value then initialize socket listeners
 			if (nextProps.user !== this.props.user) {
 				socket.on("new:room:created:" + nextProps.user["_id"], this.ioNewRoom);
 			}
+			// Increment the notification indicator if there's a new message
 			if (nextProps.notifyNewGroupMessage !== this.props.notifyNewGroupMessage) {
 
 				var rooms = this.state.rooms;
@@ -24205,7 +24209,7 @@ var RoomsList = function (_Component) {
 	}, {
 		key: 'ioNewRoom',
 		value: function ioNewRoom(data) {
-
+			// Update the room list for a new created room from other users with socketio
 			var rooms = this.state.rooms;
 
 			rooms = (0, _reactAddonsUpdate2.default)(rooms, { $push: [data] });
@@ -24330,10 +24334,6 @@ var Signin = function (_Component) {
 		_this.state.error = "";
 		_this.state.email = "";
 		_this.state.password = "";
-		_this.base_url = 'http://localhost:8000';
-		// this.showSessionMsg = props.location.query? props.location.query.session:true;
-		// this._handlePasswordChange = this._handlePasswordChange.bind(this);
-		// this._handleEmailChange = this._handleEmailChange.bind(this);
 		_this._onSubmit = _this._onSubmit.bind(_this);
 		_this._onChange = _this._onChange.bind(_this);
 		return _this;
@@ -24353,13 +24353,12 @@ var Signin = function (_Component) {
 			var _this2 = this;
 
 			e.preventDefault();
-			//console.log(this.state);
-
-
 			_axios2.default.post('auth/signin', { 'username': this.state.username, 'password': this.state.password }).then(function (response) {
 				if (response.data == true) {
+					//If successful signin redirect to the dashboard
 					_this2.context.router.transitionTo('/');
 				} else {
+					// Redirect to signin page if its fail
 					_this2.context.router.transitionTo('signin');
 				}
 			}).catch(function (e) {
@@ -24369,8 +24368,6 @@ var Signin = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var jokes = this.state.jokes;
-
 
 			return _react2.default.createElement(
 				'div',
@@ -24526,7 +24523,6 @@ var Signup = function (_Component) {
     _this.state.email = "";
     _this.state.password = "";
     _this.state.username = "";
-    _this.base_url = 'http://localhost:8000';
     _this._onSubmit = _this._onSubmit.bind(_this);
     _this._onChange = _this._onChange.bind(_this);
 

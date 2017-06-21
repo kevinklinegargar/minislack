@@ -1,4 +1,5 @@
 var config = {};
+config.host = "http://localhost";
 config.port = 3000;
 config.mongodb = {};
 

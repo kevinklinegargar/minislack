@@ -55,11 +55,12 @@ module.exports = function (socket) {
 	
 			var roomId = room["_id"];
 			var participants = room["participants"];
+			// Notify each participants for the new upate of room participants
 			for(var xx =0;xx < participants.length;xx++){
 				var participant = participants[xx];
 				socket.broadcast.emit("participants:update:"+participant,room);	  
 			}
-        	//socket.broadcast.emitres.json(room);
+        	
     	});	
 	});
 	socket.on("room:create",function(data){
@@ -77,7 +78,7 @@ module.exports = function (socket) {
 				for(var ii=0; ii < users.length;ii++){
 					
 					var user = users[ii];
-				
+					// Notify all users for the new for the newly created room
 					socket.emit("new:room:created:"+user["_id"],room);
 					socket.broadcast.emit("new:room:created:"+user["_id"],room);
 			

@@ -14,25 +14,28 @@ class ChatBox extends Component {
 		this.ioUpdateParticipants = this.ioUpdateParticipants.bind(this);
 	}
 	componentDidUpdate() {
+		//Scroll the message box to bottom everytime there's new message.
 		$(".main-section").animate({ scrollTop:88888 }, 0);
 	}
 	componentDidMount(){
+		//Scroll the message box to bottom after rendering all the messages.
 		$(".main-section").animate({ scrollTop:88888 }, 0);
 	}
 	componentWillReceiveProps(nextProps){
-	
+		//Check if the user swtiched to a different room or private message
 		if(nextProps.roomId !== this.props.roomId){
+			//Update the this.state.optionsChecked for the list of participants involve on this group chat
 			if(nextProps.isGroupChat  == true ){
 					let checkedArray = [this.props.user["_id"]];
 					let users = nextProps.users;
 					for(var yy =0;yy < users.length;yy++){
 							var user = users[yy];
+
+							//Checked if the login user is also a participant then add it to the array
 							if(user["participant"] == true){
-								
 								checkedArray.push(user["_id"]);
 							}
 						}
-						//checkedArray.push(this.props.user["_id"]);
 						this.setState({optionsChecked: checkedArray});
 					
 			}	
@@ -43,21 +46,18 @@ class ChatBox extends Component {
 	}
 	ioUpdateParticipants(e){
 		e.preventDefault();
-	
-		socket.emit("participants:update",{roomId:this.props.roomId,participants:this.state.optionsChecked});
-		
+		//Update the db for the new room participants using socketio
+		socket.emit("participants:update",{roomId:this.props.roomId,participants:this.state.optionsChecked});	
 	}
 	toggleCheckBox(event) {
-    
+		//Handle the participants checkboxes.
     	let checkedArray = this.state.optionsChecked;
       	let selectedValue = event.target.value;
         
         if (event.target.checked === true) {
         
         	checkedArray.push(selectedValue);
-            this.setState({
-              optionsChecked: checkedArray
-            });
+            this.setState({optionsChecked: checkedArray});
 			var users = this.props.users;
 			var userId = event.target.value;
 			for(var yy =0;yy < users.length;yy++){
@@ -66,7 +66,6 @@ class ChatBox extends Component {
 					users[yy]["participant"] = true;
 				}
 			}
-	
                         
         } else {
         
@@ -91,7 +90,7 @@ class ChatBox extends Component {
 
 	
 	handleKeyPress(e){
-		
+		//When the enter pressed, send the message through the parent method
 		if(e.key == "Enter"){
 			var message = e.target.value;
 			if(message !== ""){
@@ -104,6 +103,7 @@ class ChatBox extends Component {
 
 	}
 	getMessageOwnerUsername(userId){
+		//get the message username by user id
 		var users = this.props.users;
 		for(var xx=0;xx < users.length;xx++){
 			if(userId == users[xx]["_id"]){
@@ -115,7 +115,6 @@ class ChatBox extends Component {
 	render() {
 		var messages = this.props.messages;
 		let users = this.props.users;
-		console.log(messages);
 		let outputCheckboxes = users.map(function(user, i){
         	return (<div key={user._id}><CheckBox checked={user.participant} value={user._id} id={'string_' + user._id} onChange={this.toggleCheckBox.bind(this)} /><label htmlFor={'string_' + i}>{user.username}</label></div>)
         }, this);

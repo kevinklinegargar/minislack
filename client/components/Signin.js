@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 var $ = require('jquery');
 import Nav from './Nav';
 import axios from 'axios';
+
 class Signin extends Component {
 
 	constructor() {
@@ -11,10 +12,6 @@ class Signin extends Component {
 		this.state.error = "";
 		this.state.email = "";
 		this.state.password = "";
-		this.base_url = 'http://localhost:8000';
-		// this.showSessionMsg = props.location.query? props.location.query.session:true;
-		// this._handlePasswordChange = this._handlePasswordChange.bind(this);
-		// this._handleEmailChange = this._handleEmailChange.bind(this);
 		this._onSubmit = this._onSubmit.bind(this);
         this._onChange = this._onChange.bind(this);
 	}
@@ -26,15 +23,15 @@ class Signin extends Component {
        
     }
     _onSubmit(e) {
+
 		e.preventDefault();
-        //console.log(this.state);
-    
-		
   		axios.post('auth/signin',{'username':this.state.username,'password':this.state.password})
 		  .then(response => {
 			  if(response.data == true){
+				  //If successful signin redirect to the dashboard
 				  this.context.router.transitionTo('/');	
 			  }else{
+					// Redirect to signin page if its fail
 					this.context.router.transitionTo('signin');  
 			  }
 		  })
@@ -45,8 +42,6 @@ class Signin extends Component {
 	}
 
 	render() {
-
-		const { jokes } = this.state;
 
 		return (
          

@@ -13,7 +13,6 @@ class Signup extends Component {
 		this.state.email = "";
 		this.state.password = "";
         this.state.username = "";
-		this.base_url = 'http://localhost:8000';
 		this._onSubmit = this._onSubmit.bind(this);
         this._onChange = this._onChange.bind(this);
 		

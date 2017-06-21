@@ -16,6 +16,7 @@ class RoomsList extends Component {
 		this.ioNewRoom =this.ioNewRoom.bind(this);
 	}
 	componentDidMount(){
+		// Populate all the room in the sidebar
 		axios.post('room/all').then( rooms => {
 			var rooms = rooms.data;
 			for(var xx=0;xx < rooms.length;xx++){
@@ -27,9 +28,11 @@ class RoomsList extends Component {
 	
 	}
 	componentWillReceiveProps(nextProps){
+		// Wait for the props.user will have value then initialize socket listeners
 		if(nextProps.user !== this.props.user){
 			socket.on("new:room:created:"+nextProps.user["_id"],this.ioNewRoom);	
 		}
+		// Increment the notification indicator if there's a new message
 		if(nextProps.notifyNewGroupMessage !== this.props.notifyNewGroupMessage){
 	
 			let rooms = this.state.rooms;
@@ -54,7 +57,7 @@ class RoomsList extends Component {
 	}
 
 	ioNewRoom(data){
-
+		// Update the room list for a new created room from other users with socketio
 		var rooms = this.state.rooms;
 	
 		rooms = update(rooms,{$push: [data]});
