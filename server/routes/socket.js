@@ -37,7 +37,7 @@ module.exports = function (socket) {
 
 
 				}else{
-					console.log("Private Message.");
+				
 					socket.broadcast.emit("receive:message:"+newMessage["roomId"],newMessage);
 				}
 

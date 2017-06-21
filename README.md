@@ -31,6 +31,7 @@ A demo chat application using ReactJS, ExpressJS, SocketIO and MongoDB.
 
 * **Group Messaging**
 	* Able to edit the participants.
-	* User does not involve in the group message cannot access the room.
+	* User does not involve in the group message cannot access the room. Will give a warning message.
 	* Real time update to all users for the newly created rooms.
 	* Notification indicator if a room has a new message but the user is in a different room.
+	* Only rooms that the user is a participant will appear on the list.

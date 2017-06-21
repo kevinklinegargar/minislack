@@ -23729,6 +23729,7 @@ var Dashboard = function (_Component) {
 
 				if (response.data) {
 					_this2.setState({ user: response.data });
+					socket.on("new:user", _this2.ioNewUser.bind(_this2));
 				}
 				// Get all the registered users
 				_this2.getAllUsers(function (users) {
@@ -23755,10 +23756,11 @@ var Dashboard = function (_Component) {
 			var _this3 = this;
 
 			socket.on("receive:message:" + this.state.user["_id"], this.ioReceiveMessage.bind(this));
-			socket.on("new:user", this.ioNewUser.bind(this));
-			socket.on("participants:update:" + this.state.user["_id"], function (room) {
 
-				_this3.updateRoomParticipants(room._id, room.participants);
+			socket.on("participants:update:" + this.state.user["_id"], function (room) {
+				if (room._id == _this3.state.roomId) {
+					_this3.updateRoomParticipants(room._id, room.participants, false);
+				}
 			});
 		}
 	}, {
@@ -23861,9 +23863,10 @@ var Dashboard = function (_Component) {
 		}
 	}, {
 		key: 'updateRoomParticipants',
-		value: function updateRoomParticipants(roomId, participants) {
+		value: function updateRoomParticipants(roomId, participants, updateRoomId) {
 			// Check and flag the user if its involve in the room
 			var users = this.state.users;
+
 			for (var xx = 0; xx < users.length; xx++) {
 				var user = users[xx];
 				users[xx]["participant"] = false;
@@ -23879,7 +23882,9 @@ var Dashboard = function (_Component) {
 
 			this.setState({ users: users });
 			this.setState({ isGroupChat: true });
-			this.setState({ roomId: roomId });
+			if (updateRoomId == true) {
+				this.setState({ roomId: roomId });
+			}
 		}
 	}, {
 		key: 'onChangeChatRoom',
@@ -23915,7 +23920,7 @@ var Dashboard = function (_Component) {
 					if (isParticipant == true) {
 						_this7.getRoomMessage(id);
 						_this7.setState({ notifyNewGroupMessage: { id: id, message: false, action: "clear" } });
-						_this7.updateRoomParticipants(id, participants);
+						_this7.updateRoomParticipants(id, participants, true);
 					} else {
 						alert("This is a private room. Your eyes are not allowed.");
 					}
@@ -24163,11 +24168,21 @@ var RoomsList = function (_Component) {
 	}
 
 	_createClass(RoomsList, [{
+		key: 'componentDidUpdate',
+		value: function componentDidUpdate() {
+			//
+		}
+	}, {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
+			// Populate all the room in the sidebar
+			this.udpateAllRooms();
+		}
+	}, {
+		key: 'udpateAllRooms',
+		value: function udpateAllRooms(callback) {
 			var _this2 = this;
 
-			// Populate all the room in the sidebar
 			_axios2.default.post('room/all').then(function (rooms) {
 				var rooms = rooms.data;
 				for (var xx = 0; xx < rooms.length; xx++) {
@@ -24175,14 +24190,22 @@ var RoomsList = function (_Component) {
 					rooms[xx]["notification"] = 0;
 				}
 				_this2.setState({ rooms: rooms });
+				_this2.updateRoomsLockIndicator();
 			});
 		}
 	}, {
 		key: 'componentWillReceiveProps',
 		value: function componentWillReceiveProps(nextProps) {
+			var _this3 = this;
+
 			// Wait for the props.user will have value then initialize socket listeners
 			if (nextProps.user !== this.props.user) {
 				socket.on("new:room:created:" + nextProps.user["_id"], this.ioNewRoom);
+
+				socket.on("participants:update:" + nextProps.user["_id"], function (room) {
+
+					_this3.udpateAllRooms();
+				});
 			}
 			// Increment the notification indicator if there's a new message
 			if (nextProps.notifyNewGroupMessage !== this.props.notifyNewGroupMessage) {
@@ -24198,8 +24221,28 @@ var RoomsList = function (_Component) {
 						}
 					}
 				}
+
 				this.setState({ rooms: rooms });
 			}
+		}
+	}, {
+		key: 'updateRoomsLockIndicator',
+		value: function updateRoomsLockIndicator() {
+			var user = this.props.user;
+			var rooms = this.state.rooms;
+
+			for (var yy = 0; yy < rooms.length; yy++) {
+				var room = rooms[yy];
+				rooms[yy]["imParticipant"] = false;
+				var participants = room.participants;
+				for (var xx = 0; xx < participants.length; xx++) {
+					var participant = participants[xx];
+					if (user._id == participant) {
+						rooms[yy]["imParticipant"] = true;
+					}
+				}
+			}
+			this.setState({ rooms: rooms });
 		}
 	}, {
 		key: 'onChangeRoomNameVal',
@@ -24214,6 +24257,7 @@ var RoomsList = function (_Component) {
 
 			rooms = (0, _reactAddonsUpdate2.default)(rooms, { $push: [data] });
 			this.setState({ rooms: rooms });
+			this.updateRoomsLockIndicator();
 		}
 	}, {
 		key: 'onCreateRoom',
@@ -24223,7 +24267,7 @@ var RoomsList = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this4 = this;
 
 			var rooms = this.state.rooms;
 
@@ -24252,24 +24296,25 @@ var RoomsList = function (_Component) {
 						'ul',
 						{ className: 'main-nav rooms-list-ul' },
 						rooms.map(function (room) {
-
-							return _react2.default.createElement(
-								'li',
-								{ key: room._id, className: _this3.props.roomId == room._id ? "selected-room" : "", onClick: function onClick() {
-										return _this3.props.changeChatRoom(room._id, true);
-									} },
-								_react2.default.createElement(
-									'a',
-									{ href: '#' },
-									room.name,
-									room.notification > 0 ? _react2.default.createElement(
-										'span',
-										{ className: 'notification-counter' },
-										' ',
-										room.notification
-									) : ""
-								)
-							);
+							if (room.imParticipant == true) {
+								return _react2.default.createElement(
+									'li',
+									{ key: room._id, className: _this4.props.roomId == room._id ? "selected-room" : "", onClick: function onClick() {
+											return _this4.props.changeChatRoom(room._id, true);
+										} },
+									_react2.default.createElement(
+										'a',
+										{ href: '#' },
+										room.name,
+										room.notification > 0 ? _react2.default.createElement(
+											'span',
+											{ className: 'notification-counter' },
+											' ',
+											room.notification
+										) : ""
+									)
+								);
+							}
 						})
 					)
 				)

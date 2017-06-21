@@ -15,8 +15,16 @@ class RoomsList extends Component {
 		this.onChangeRoomNameVal = this.onChangeRoomNameVal.bind(this);
 		this.ioNewRoom =this.ioNewRoom.bind(this);
 	}
+	componentDidUpdate() {
+		//
+	}
 	componentDidMount(){
 		// Populate all the room in the sidebar
+		this.udpateAllRooms();
+		
+	
+	}
+	udpateAllRooms(callback){
 		axios.post('room/all').then( rooms => {
 			var rooms = rooms.data;
 			for(var xx=0;xx < rooms.length;xx++){
@@ -24,13 +32,19 @@ class RoomsList extends Component {
 				rooms[xx]["notification"]=0;
 			}
 			this.setState({rooms:rooms});
+			this.updateRoomsLockIndicator();
+		
 		});
-	
 	}
 	componentWillReceiveProps(nextProps){
 		// Wait for the props.user will have value then initialize socket listeners
 		if(nextProps.user !== this.props.user){
-			socket.on("new:room:created:"+nextProps.user["_id"],this.ioNewRoom);	
+			socket.on("new:room:created:"+nextProps.user["_id"],this.ioNewRoom);
+		
+			socket.on("participants:update:"+nextProps.user["_id"],(room =>{
+				
+				this.udpateAllRooms();
+			}));	
 		}
 		// Increment the notification indicator if there's a new message
 		if(nextProps.notifyNewGroupMessage !== this.props.notifyNewGroupMessage){
@@ -48,8 +62,28 @@ class RoomsList extends Component {
 				}
 				
 			}
+
 			this.setState({rooms:rooms});
+			
 		}
+		
+	}
+	updateRoomsLockIndicator(){
+		var user = this.props.user;
+		var rooms = this.state.rooms;
+		
+		for(var yy=0;yy < rooms.length;yy++){
+			var room = rooms[yy];
+			rooms[yy]["imParticipant"] = false;
+			var participants = room.participants;
+			for(var xx=0;xx < participants.length;xx++){
+				var participant = participants[xx];
+				if(user._id == participant){
+					rooms[yy]["imParticipant"] = true;
+				}
+			}
+		}
+		this.setState({rooms:rooms});
 		
 	}
 	onChangeRoomNameVal(e){
@@ -62,7 +96,7 @@ class RoomsList extends Component {
 	
 		rooms = update(rooms,{$push: [data]});
 		this.setState({rooms:rooms});
-		
+		this.updateRoomsLockIndicator();
 		
 	}
 	onCreateRoom(){
@@ -84,8 +118,10 @@ class RoomsList extends Component {
 				<div>
 					<ul className="main-nav rooms-list-ul">
 						{rooms.map(room => {
+							if(room.imParticipant == true){
+								return <li key={room._id} className={this.props.roomId == room._id?"selected-room":""} onClick={()=>this.props.changeChatRoom(room._id,true)}><a href="#">{room.name}{room.notification > 0?<span className="notification-counter"> {room.notification}</span>:""}</a></li>;
+							}
 							
-							return <li key={room._id} className={this.props.roomId == room._id?"selected-room":""} onClick={()=>this.props.changeChatRoom(room._id,true)}><a href="#">{room.name}{room.notification > 0?<span className="notification-counter"> {room.notification}</span>:""}</a></li>;
 						})}
 					</ul>
 				</div>

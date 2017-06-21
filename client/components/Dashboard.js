@@ -30,6 +30,7 @@ class Dashboard extends Component {
 			
 			if(response.data){
 				this.setState({user:response.data});
+				socket.on("new:user",this.ioNewUser.bind(this));
 			}
 			// Get all the registered users
 			this.getAllUsers(users => {
@@ -55,10 +56,12 @@ class Dashboard extends Component {
 	_initSocketEvents(){
 
 		socket.on("receive:message:"+this.state.user["_id"],this.ioReceiveMessage.bind(this));
-		socket.on("new:user",this.ioNewUser.bind(this));
-		socket.on("participants:update:"+this.state.user["_id"],(room =>{
 		
-			this.updateRoomParticipants(room._id,room.participants);
+		socket.on("participants:update:"+this.state.user["_id"],(room =>{
+			if(room._id == this.state.roomId){
+				this.updateRoomParticipants(room._id,room.participants,false);
+			}
+			
 		}));
 	}
 
@@ -148,9 +151,10 @@ class Dashboard extends Component {
 		cb(false);
 		
 	}
-	updateRoomParticipants(roomId,participants){
+	updateRoomParticipants(roomId,participants,updateRoomId){
 		// Check and flag the user if its involve in the room
 		let users = this.state.users;
+		
 		for(var xx = 0; xx < users.length;xx++){
 			var user = users[xx];
 			users[xx]["participant"] = false;
@@ -167,7 +171,10 @@ class Dashboard extends Component {
 		
 		this.setState({users:users});
 		this.setState({isGroupChat:true});
-		this.setState({roomId:roomId});
+		if(updateRoomId == true){
+			this.setState({roomId:roomId});
+		}
+		
 	}
 	onChangeChatRoom(id,isGroupChat){
 		// When the user switch a message room
@@ -199,7 +206,7 @@ class Dashboard extends Component {
 					if(isParticipant == true){
 						this.getRoomMessage(id);
 						this.setState({notifyNewGroupMessage:{id:id,message:false,action:"clear"}});
-						this.updateRoomParticipants(id,participants);
+						this.updateRoomParticipants(id,participants,true);
 					}else{
 						alert("This is a private room. Your eyes are not allowed.");
 					}
