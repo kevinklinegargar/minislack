@@ -7,11 +7,11 @@ class DashboardNav extends Component {
 	}
 	render() {
     	return (
-      		<nav className="dashboard-nav navbar navbar-default">
+      		<nav className="dashboard-nav navbar navbar-default hm-main-nav">
         		<div className="navbar-header">
           			<Link className="navbar-brand" to="/">Kevin HomeLike</Link>
         		</div>
-				<ul className="nav navbar-nav navbar-right">
+				<ul className="nav navbar-nav navbar-right hm-main-nav-right-link">
 					
 					<li><Link to="/signin"><button onClick={this.signout}className="btn btn-danger log">Signout {this.props.username}</button></Link></li>
 				</ul>

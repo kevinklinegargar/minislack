@@ -45,20 +45,20 @@ class Signup extends Component {
 
 		return (
             
-			<div className="form-container">
+			<div>
                 <Nav />
-                <form ref='user_form' onSubmit={this._onSubmit}>
+                <form className="form-signup" ref='user_form' onSubmit={this._onSubmit}>
               
                     <label className="control-label">Username </label>
-                    <input  name="username" ref="username" type="text" className="form-control" id="username" placeholder="Username" onChange={this._onChange}/>
+                    <input  minlength="4" name="username" ref="username" type="text" className="form-control" id="username" placeholder="Username" onChange={this._onChange} required/>
            
                     <label className="control-label" >Email address</label>
-                    <input  name="email" ref="email" type="email" className="form-control" id="email" placeholder="Email" onChange={this._onChange}/>
+                    <input  name="email" ref="email" type="email" className="form-control" id="email" placeholder="Email" onChange={this._onChange} required/>
        
                     <label className="control-label">Password</label>
-                    <input  name="password" ref="password" type="password" className="form-control" id="password" placeholder="Password"  onChange={this._onChange}/>
+                    <input  minlength="4" name="password" ref="password" type="password" className="form-control" id="password" placeholder="Password"  onChange={this._onChange} required/>
           
-                    <button type="submit" className="btn btn-default">Sign-up</button>
+                    <button type="submit" className="btn btn-default btn-signup">Sign-up</button>
                 </form>
             </div>
 		);

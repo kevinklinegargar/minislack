@@ -49,10 +49,10 @@ class Signin extends Component {
 		const { jokes } = this.state;
 
 		return (
-            
-			<div className="form-container">
+         
+			<div >
                 <Nav />
-                <form ref='user_form' onSubmit={this._onSubmit}>
+                <form ref='user_form' className="form-signin" onSubmit={this._onSubmit}>
               
                     <label className="control-label">Username </label>
                     <input name="username" ref="username" type="text" className="form-control" id="username" placeholder="Username" onChange={this._onChange}/>
@@ -60,7 +60,7 @@ class Signin extends Component {
                     <label className="control-label">Password</label>
                     <input name="password" ref="password" type="password" className="form-control" id="password" placeholder="Password"  onChange={this._onChange}/>
           
-                    <button type="submit" className="btn btn-default">Sign-in</button>
+                    <button type="submit" className="btn btn-default btn-signin">Sign-in</button>
                 </form>
             </div>
 		);

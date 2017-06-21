@@ -213,7 +213,7 @@ class Dashboard extends Component {
 		return (
 		
 			<div className="wrapper">
-				 <DashboardNav/>
+				 <DashboardNav username={this.state.user.username}/>
 				<div className="sideBar">
 					<UsersList roomId={this.state.roomId} users={this.state.users} changeChatRoom={this.onChangeChatRoom.bind(this)} />
 					<RoomsList  roomId={this.state.roomId} notifyNewGroupMessage={this.state.notifyNewGroupMessage} changeChatRoom={this.onChangeChatRoom.bind(this)} user={this.state.user}/>
