@@ -3,6 +3,7 @@ A demo chat application using ReactJS, ExpressJS, SocketIO and MongoDB.
 
 ### Getting Started
 * Clone the repo
+* Run mongoDB
 * Setup the port and mongodb uri in `server/config/config.js`
 * npm install
 * npm run webpack
