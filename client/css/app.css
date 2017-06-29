@@ -24,6 +24,7 @@ html, body {
 	width: 200px;
     border-radius: 4px;
     padding: 6px;
+	cursor:pointer;
 }
 .chat-item-image-owner{
 	border: 2px solid #5cb85c;
@@ -240,9 +241,10 @@ html, body {
 }
 .chatbox-wrapper .chat-type-here-box{
 	 position: fixed;
-    bottom: 0px;
+    bottom: -12px;
 	width: calc(100% - 250px);
 	float: left;
+
 	
 }
 .chatbox{

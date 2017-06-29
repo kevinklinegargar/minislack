@@ -158,7 +158,7 @@ class ChatBox extends Component {
 									return 	<div key={item._id} className="hm-message-div">
 												{
 													item.type== "image"?
-													<span ><img className={"chat-item-image "+(item.ownerId == this.props.user._id?"chat-item-image-owner":"chat-item-image-not-owner")} src={"./../uploads/"+item.message}/></span>
+													<span ><img className={"chat-item-image "+(item.ownerId == this.props.user._id?"chat-item-image-owner":"chat-item-image-not-owner")} src={"./../uploads/"+item.message} data-lity/></span>
 													:
 													<span  className={"hm-message-span "+(item.ownerId == this.props.user._id?"hm-message-owner":"hm-message-not-owner")}> {item.message}</span>
 												}
