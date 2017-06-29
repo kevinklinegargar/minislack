@@ -36,3 +36,8 @@ A demo chat application using ReactJS, ExpressJS, SocketIO and MongoDB.
 	* Real time update to all users for the newly created rooms.
 	* Notification indicator if a room has a new message but the user is in a different room.
 	* Only rooms that the user is a participant will appear on the list.
+
+* **Upload images in Chatbox**
+	* Able to send images to Group or Private rooms.
+ 	*  Image can be view with its full resolution by clicking it in the chatbox.
+ 	* Allowable image format. .png, .jpg, .gif, .jpeg
