@@ -19,6 +19,7 @@ var authRoutes = require('./routes/auth');
 var userRoutes = require('./routes/user');
 var messageRoutes = require('./routes/message');
 var roomRoutes = require('./routes/room');
+var uploadRoutes = require('./routes/upload');
 var socket = require('./routes/socket');
 var bodyParser = require('body-parser');
 
@@ -102,6 +103,7 @@ app.use('/auth', authRoutes);
 app.use('/user',userRoutes);
 app.use('/message',messageRoutes);
 app.use('/room',roomRoutes);
+app.use('/upload',uploadRoutes);
 
 app.get('*', function(req, res){
   res.redirect('/');

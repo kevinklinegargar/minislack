@@ -11,6 +11,7 @@ module.exports = function (socket) {
 	
 		var newMessage = new Message({
 				message:data.message,
+				type:data.type,
 				ownerId:data.ownerId,
 				roomId:data.roomId,
 				isGroupChat:data.isGroupChat

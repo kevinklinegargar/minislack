@@ -8,6 +8,10 @@ var MessageSchema = mongoose.Schema({
     message:{
         type:String
     },
+	type:{
+		type:String,
+		default: 'text'
+	},
 	ownerId: {
 		type:String
 	},

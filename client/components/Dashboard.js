@@ -219,10 +219,11 @@ class Dashboard extends Component {
 		}
 
 	}
-	onSendMessage(message){
+	onSendMessage(message,type){
 		//Update the state.messages and send the message through socket io.
 		var newMessage = {
 			message:message,
+			type:type,
 			ownerId:this.state.user["_id"],
 			roomId:this.state.roomId,
 			isGroupChat:this.state.isGroupChat

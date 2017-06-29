@@ -20,6 +20,17 @@ html, body {
     border: 1px solid #1b957f;
 
 }
+.chat-item-image{
+	width: 200px;
+    border-radius: 4px;
+    padding: 6px;
+}
+.chat-item-image-owner{
+	border: 2px solid #5cb85c;
+}
+.chat-item-image-not-owner{
+	border: 2px solid #e0e0e0;
+}
 .clear-both{
 	clear: both;
 }
@@ -225,12 +236,13 @@ html, body {
 }
 .chatbox-wrapper  .chat-type-here{
 	padding:15px;
-	width: 100%;
+	width: calc(100% - 64px);
 }
 .chatbox-wrapper .chat-type-here-box{
 	 position: fixed;
     bottom: 0px;
-    width: 100%;
+	width: calc(100% - 250px);
+	float: left;
 	
 }
 .chatbox{
@@ -284,6 +296,24 @@ html, body {
 	/*float: left;
     width: 100%;
     padding-right: 25px;*/
+}
+.input-file-upload{
+	width: 64px;
+    position: absolute;
+    top: 0;
+    height: 64px;
+    cursor: pointer;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  	filter: alpha(opacity=0);
+	-moz-opacity: 0;
+  	-khtml-opacity: 0;
+  	opacity: 0;
+}
+.image-upload{
+	position: relative;
+	float: right;
+    top: -6px;
+	
 }
 .navbar {
 	margin-bottom: 0px !important;

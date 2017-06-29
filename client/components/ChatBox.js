@@ -12,6 +12,7 @@ class ChatBox extends Component {
 			optionsChecked: []
 		}
 		this.ioUpdateParticipants = this.ioUpdateParticipants.bind(this);
+		this.handleUploadFile = this.handleUploadFile.bind(this);
 	}
 	componentDidUpdate() {
 		//Scroll the message box to bottom everytime there's new message.
@@ -94,13 +95,40 @@ class ChatBox extends Component {
 		if(e.key == "Enter"){
 			var message = e.target.value;
 			if(message !== ""){
-				this.props.sendMessage(message);
+				this.props.sendMessage(message,'text');
 				//socket.emit("send:message",newMessage)
 			}
 		
 
 		}
 
+	}
+	handleUploadFile(e){
+		
+		var fd = new FormData();    
+        fd.append('file', e.target.files[0]);
+
+        $.ajax({
+            url: 'upload/file',
+            data: fd,
+			
+            dataType: "JSON",
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: (data)=>{
+				this.props.sendMessage(data.filename,'image');
+             
+            },
+			error: function(jqXHR, textStatus, err) {
+			
+				 if(jqXHR.responseText == "invalid_format"){
+					alert("Only image file is allowed.");
+					
+				 }
+			}
+        });
+        e.preventDefault()	
 	}
 	getMessageOwnerUsername(userId){
 		//get the message username by user id
@@ -128,8 +156,13 @@ class ChatBox extends Component {
 							{messages.map(item => {
 									
 									return 	<div key={item._id} className="hm-message-div">
+												{
+													item.type== "image"?
+													<span ><img className={"chat-item-image "+(item.ownerId == this.props.user._id?"chat-item-image-owner":"chat-item-image-not-owner")} src={"./../uploads/"+item.message}/></span>
+													:
+													<span  className={"hm-message-span "+(item.ownerId == this.props.user._id?"hm-message-owner":"hm-message-not-owner")}> {item.message}</span>
+												}
 												
-												<span  className={"hm-message-span "+(item.ownerId == this.props.user._id?"hm-message-owner":"hm-message-not-owner")}> {item.message}</span>
 												<br/>
 												{
 													this.props.isGroupChat == true?<span className="messagge-owner-name">{this.getMessageOwnerUsername(item.ownerId)}</span>:""
@@ -139,10 +172,18 @@ class ChatBox extends Component {
 							})}
 							</div>
 						</div>
-						<div className="chat-type-here-box">
-							<input type="text" onKeyPress={this.handleKeyPress.bind(this)} className="chat-type-here" placeholder="Type here..."/>
-							
-						</div>
+			
+							<div className="chat-type-here-box">
+								<input type="text" onKeyPress={this.handleKeyPress.bind(this)} className="chat-type-here" placeholder="Type here..."/>
+								<div className="image-upload">
+									<label for="file-input">
+										<img src="./../css/images/image_upload.png"/>
+									</label>
+
+									<input type="file" className="input-file-upload" id="file-input" name="avatar" onChange={this.handleUploadFile}/>
+								</div>
+							</div>
+						
 					</div>
 					{this.props.isGroupChat == true ? 
 						<div className="chatbox-participants">
