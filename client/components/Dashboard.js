@@ -43,9 +43,10 @@ class Dashboard extends Component {
 						}
 					});
 					// Initialize all the socket listeners and events
-					this._initSocketEvents();
+					
 				}
 			});
+			this._initSocketEvents();
 		}).catch( e => {
 			// if not logged in redirect to the signin page.
 			this.context.router.transitionTo('signin');	
@@ -107,10 +108,17 @@ class Dashboard extends Component {
 				this.setState({messages:messages});		
 			}else{
 				let users = this.state.users;
+			
 				for(var xx=0;xx < users.length;xx++){
 					var user = users[xx];
 					if(user._id == data.ownerId){
-						users[xx].notification++;
+						var notification =users[xx].notification;
+						if(notification){
+							users[xx].notification++;
+						}else{
+							users[xx].notification = 1;
+						}
+						
 					}
 				}
 				this.setState({users:users});

@@ -49,13 +49,13 @@ class Signup extends Component {
                 <form className="form-signup" ref='user_form' onSubmit={this._onSubmit}>
               
                     <label className="control-label">Username </label>
-                    <input  minlength="4" name="username" ref="username" type="text" className="form-control" id="username" placeholder="Username" onChange={this._onChange} required/>
+                    <input  minLength="4" name="username" ref="username" type="text" className="form-control" id="username" placeholder="Username" onChange={this._onChange} required/>
            
                     <label className="control-label" >Email address</label>
                     <input  name="email" ref="email" type="email" className="form-control" id="email" placeholder="Email" onChange={this._onChange} required/>
        
                     <label className="control-label">Password</label>
-                    <input  minlength="4" name="password" ref="password" type="password" className="form-control" id="password" placeholder="Password"  onChange={this._onChange} required/>
+                    <input  minLength="4" name="password" ref="password" type="password" className="form-control" id="password" placeholder="Password"  onChange={this._onChange} required/>
           
                     <button type="submit" className="btn btn-default btn-signup">Sign-up</button>
                 </form>

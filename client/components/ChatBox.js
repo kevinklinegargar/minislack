@@ -96,6 +96,7 @@ class ChatBox extends Component {
 			var message = e.target.value;
 			if(message !== ""){
 				this.props.sendMessage(message,'text');
+				$(".chat-type-here").val("");
 				//socket.emit("send:message",newMessage)
 			}
 		
@@ -176,7 +177,7 @@ class ChatBox extends Component {
 							<div className="chat-type-here-box">
 								<input type="text" onKeyPress={this.handleKeyPress.bind(this)} className="chat-type-here" placeholder="Type here..."/>
 								<div className="image-upload">
-									<label for="file-input">
+									<label htmlFor="file-input">
 										<img src="./../css/images/image_upload.png"/>
 									</label>
 

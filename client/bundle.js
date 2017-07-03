@@ -23744,6 +23744,7 @@ var ChatBox = function (_Component) {
 				var message = e.target.value;
 				if (message !== "") {
 					this.props.sendMessage(message, 'text');
+					$(".chat-type-here").val("");
 					//socket.emit("send:message",newMessage)
 				}
 			}
@@ -23853,7 +23854,7 @@ var ChatBox = function (_Component) {
 							{ className: 'image-upload' },
 							_react2.default.createElement(
 								'label',
-								{ 'for': 'file-input' },
+								{ htmlFor: 'file-input' },
 								_react2.default.createElement('img', { src: './../css/images/image_upload.png' })
 							),
 							_react2.default.createElement('input', { type: 'file', className: 'input-file-upload', id: 'file-input', name: 'avatar', onChange: this.handleUploadFile })
@@ -24044,9 +24045,9 @@ var Dashboard = function (_Component) {
 							}
 						});
 						// Initialize all the socket listeners and events
-						_this2._initSocketEvents();
 					}
 				});
+				_this2._initSocketEvents();
 			}).catch(function (e) {
 				// if not logged in redirect to the signin page.
 				_this2.context.router.transitionTo('signin');
@@ -24117,10 +24118,16 @@ var Dashboard = function (_Component) {
 					this.setState({ messages: messages });
 				} else {
 					var users = this.state.users;
+
 					for (var xx = 0; xx < users.length; xx++) {
 						var user = users[xx];
 						if (user._id == data.ownerId) {
-							users[xx].notification++;
+							var notification = users[xx].notification;
+							if (notification) {
+								users[xx].notification++;
+							} else {
+								users[xx].notification = 1;
+							}
 						}
 					}
 					this.setState({ users: users });
@@ -24917,7 +24924,7 @@ var Signup = function (_Component) {
             { className: 'control-label' },
             'Username '
           ),
-          _react2.default.createElement('input', { minlength: '4', name: 'username', ref: 'username', type: 'text', className: 'form-control', id: 'username', placeholder: 'Username', onChange: this._onChange, required: true }),
+          _react2.default.createElement('input', { minLength: '4', name: 'username', ref: 'username', type: 'text', className: 'form-control', id: 'username', placeholder: 'Username', onChange: this._onChange, required: true }),
           _react2.default.createElement(
             'label',
             { className: 'control-label' },
@@ -24929,7 +24936,7 @@ var Signup = function (_Component) {
             { className: 'control-label' },
             'Password'
           ),
-          _react2.default.createElement('input', { minlength: '4', name: 'password', ref: 'password', type: 'password', className: 'form-control', id: 'password', placeholder: 'Password', onChange: this._onChange, required: true }),
+          _react2.default.createElement('input', { minLength: '4', name: 'password', ref: 'password', type: 'password', className: 'form-control', id: 'password', placeholder: 'Password', onChange: this._onChange, required: true }),
           _react2.default.createElement(
             'button',
             { type: 'submit', className: 'btn btn-default btn-signup' },
