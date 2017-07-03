@@ -24516,6 +24516,7 @@ var RoomsList = function (_Component) {
 
 					_this3.udpateAllRooms();
 				});
+				this.udpateAllRooms();
 			}
 			// Increment the notification indicator if there's a new message
 			if (nextProps.notifyNewGroupMessage !== this.props.notifyNewGroupMessage) {

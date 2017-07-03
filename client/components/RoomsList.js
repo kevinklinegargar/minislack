@@ -44,7 +44,8 @@ class RoomsList extends Component {
 			socket.on("participants:update:"+nextProps.user["_id"],(room =>{
 				
 				this.udpateAllRooms();
-			}));	
+			}));
+			this.udpateAllRooms();	
 		}
 		// Increment the notification indicator if there's a new message
 		if(nextProps.notifyNewGroupMessage !== this.props.notifyNewGroupMessage){
