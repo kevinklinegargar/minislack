@@ -1,4 +1,4 @@
-# Kevin HomeLike
+# MiniSlack
 A demo chat application using ReactJS, ExpressJS, SocketIO and MongoDB.
 
 ### Getting Started
